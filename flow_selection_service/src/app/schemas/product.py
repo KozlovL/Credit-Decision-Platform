@@ -5,11 +5,10 @@ from pydantic import BaseModel, Field, field_validator, PositiveInt, ConfigDict
 
 from app.constants import (
     PRODUCT_NAME_MIN_LENGTH,
-    PRODUCT_NAME_MAX_LENGTH, FIRST_PHONE_NUMBER_SYMBOL, PHONE_NUMBER_LENGTH,
-    INTEREST_RATE_DAILY_MIN_LENGTH, INTEREST_RATE_DAILY_MAX_LENGTH,
+    PRODUCT_NAME_MAX_LENGTH, INTEREST_RATE_DAILY_MIN_LENGTH,
+    INTEREST_RATE_DAILY_MAX_LENGTH,
 )
-
-from src.app.constants import PHONE_REGEX
+from app.constants import PHONE_REGEX
 
 
 class CustomerWrite(BaseModel):
