@@ -9,6 +9,8 @@ from app.constants import (
     INTEREST_RATE_DAILY_MIN_LENGTH, INTEREST_RATE_DAILY_MAX_LENGTH,
 )
 
+from src.app.constants import PHONE_REGEX
+
 
 class CustomerWrite(BaseModel):
     """Схема клиента для записи."""
@@ -16,22 +18,13 @@ class CustomerWrite(BaseModel):
 
     @field_validator('phone')
     def validate_phone(cls, phone):
-        # Проверяем, что номер телефона состоит из цифр, начинается на цифру
-        # 7 и имеет длину 11 символов
-        if not phone.isdigit():
+        if not PHONE_REGEX.match(phone):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail='Номер телефона должен состоять из цифр'
-            )
-        if not phone[0] == FIRST_PHONE_NUMBER_SYMBOL:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Номер телефона должен начинаться с цифры 7'
-            )
-        if not len(phone) == PHONE_NUMBER_LENGTH:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Номер телефона должен иметь длину 11 символов'
+                detail=(
+                    'Номер телефона должен быть строкой из 11 цифр и '
+                    'начинаться на 7'
+                    )
             )
         return phone
 
