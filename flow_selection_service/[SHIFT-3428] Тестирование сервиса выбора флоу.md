@@ -75,7 +75,7 @@ curl -X 'POST' \
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3428 git@shift.gitlab.yandexcloud.net:L_K/shift_project.git
+git clone -b shift-3428 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
