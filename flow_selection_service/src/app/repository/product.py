@@ -1,8 +1,9 @@
 from json import load
 
 from app.constants import (
-    PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE,
+    PIONEER_FLOW_TYPE,
     PRODUCT_LIST_JSON_PATH,
+    REPEATER_FLOW_TYPE,
 )
 
 # База данных номеров
@@ -23,5 +24,5 @@ FLOW_TYPES = (PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE)
 
 # База данных доступных продуктов
 # Список доступных продуктов получаем из json файла
-with open(PRODUCT_LIST_JSON_PATH, 'r', encoding='utf-8') as file:
+with open(PRODUCT_LIST_JSON_PATH, encoding='utf-8') as file:
     AVAILABLE_PRODUCT_LIST = load(file)
