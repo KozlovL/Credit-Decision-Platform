@@ -1,11 +1,13 @@
 from common.repository.product import AVAILABLE_PRODUCT_LIST
-from common.repository.user import add_user, USERS_PHONES
+from common.repository.user import USERS_PHONES, add_user
 from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter
 
 from app.constants import (
-    PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE, PRODUCT_PREFIX,
+    PIONEER_FLOW_TYPE,
+    PRODUCT_PREFIX,
     PRODUCTS_TAG,
+    REPEATER_FLOW_TYPE,
 )
 from app.schemas.product import FlowProductListRead
 

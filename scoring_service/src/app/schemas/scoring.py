@@ -1,6 +1,6 @@
 from common.schemas.product import ProductRead
 from common.schemas.user import UserPhoneWrite
-from pydantic import BaseModel, ConfigDict, PositiveInt, Field
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt
 
 from app.constants import (
     AGE_MAX,
