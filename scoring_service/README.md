@@ -6,29 +6,27 @@
 
 ---
 
-## Сервис: flow_selection_service
+## Сервис: scoring_service
 
-Эндпоинт для выбора флоу по номеру телефона:
+Эндпоинт для скоринга нового пользователя:
 
-### POST `/api/products`
+### POST `/api/scoring/pioneer`
 
 **Описание:**  
-Выбор флоу (новый/существующий клиент) по номеру телефона.
+Процесс скоринга пользователя и подбор подходящего продукта.
 
 **Request body (JSON):**
 
 ```json
 {
-  "phone": "71111112111"
-}
-```
-
-**Пример ответа (200 OK):**
-
-```json
-{
-  "flow_type": "pioneer",
-  "available_products": [
+  "user_data": {
+    "phone": "79123456789",
+    "age": 28,
+    "monthly_income": 45000,
+    "employment_type": "full_time",
+    "has_property": true
+  },
+  "products": [
     {
       "name": "MicroLoan",
       "max_amount": 3000000,
@@ -51,15 +49,40 @@
 }
 ```
 
+**Пример ответа (200 OK):**
+
+```json
+{
+  "decision": "accepted",
+  "product": {
+    "name": "QuickMoney",
+    "max_amount": 1500000,
+    "term_days": 15,
+    "interest_rate_daily": "2.5"
+  }
+}
+```
+
 **Curl пример:**
 
 ```bash
 curl -X 'POST' \
-  'http://127.0.0.1:8000/api/products' \
+  'http://127.0.0.1:8000/api/scoring/pioneer' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-"phone": "71111112111"
+"user_data": {
+  "phone": "79123456789",
+  "age": 28,
+  "monthly_income": 45000,
+  "employment_type": "full_time",
+  "has_property": true
+},
+"products": [
+  {"name": "MicroLoan","max_amount":3000000,"term_days":30,"interest_rate_daily":"2.0"},
+  {"name": "QuickMoney","max_amount":1500000,"term_days":15,"interest_rate_daily":"2.5"},
+  {"name": "ConsumerLoan","max_amount":50000000,"term_days":90,"interest_rate_daily":"1.5"}
+]
 }'
 ```
 
@@ -75,7 +98,7 @@ curl -X 'POST' \
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3428 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3473 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -84,7 +107,7 @@ cd shift_project
 ### 2. Создание виртуального окружения через Poetry
 
 ```bash
-poetry install --no-root --directory flow_selection_service
+poetry install --no-root --directory scoring_service
 ```
 
 ---
@@ -94,13 +117,13 @@ poetry install --no-root --directory flow_selection_service
 **Windows (PowerShell):**
 
 ```powershell
-$Env:PYTHONPATH = "$(pwd)\flow_selection_service\src"
+$Env:PYTHONPATH = "$(pwd)\scoring_service\src"
 ```
 
 **Linux/macOS:**
 
 ```bash
-export PYTHONPATH="$(pwd)/flow_selection_service/src"
+export PYTHONPATH="$(pwd)/scoring_service/src"
 ```
 
 ---
@@ -108,11 +131,11 @@ export PYTHONPATH="$(pwd)/flow_selection_service/src"
 ### 4. Запуск сервиса
 
 ```bash
-poetry run --directory flow_selection_service uvicorn app.service:app
+poetry run --directory scoring_service uvicorn app.service:app
 ```
 
 - Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
-- Эндпоинт `/api/products` готов к тестированию.
+- Эндпоинт `/api/scoring/pioneer` готов к тестированию.
 - Документация доступна по адресу: `http://127.0.0.1:8000/docs`.
 
 ---
@@ -120,7 +143,7 @@ poetry run --directory flow_selection_service uvicorn app.service:app
 ### 5. Запуск тестов
 
 ```bash
-poetry run --directory flow_selection_service pytest -v
+poetry run --directory scoring_service pytest -v
 ```
 
 ---
