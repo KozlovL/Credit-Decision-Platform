@@ -1,6 +1,5 @@
 from app.schemas.scoring import (
-    UserDataWrite, ProductListWrite,
-    FlowProductListRead, ProductRead, ProductWrite,
+    UserDataWrite, ProductRead, ProductWrite,
 )
 
 

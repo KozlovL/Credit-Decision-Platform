@@ -6,7 +6,7 @@ from app.api.scoring_process import (
 )
 from app.schemas.scoring import (
     ScoringRead,
-    UserDataWrite, ProductListWrite, ProductWrite,
+    UserDataWrite, ProductWrite,
 )
 
 router = APIRouter(prefix='/scoring', tags=['scoring'])
@@ -21,6 +21,7 @@ def scoring_pioneer(
         user_data: UserDataWrite,
         products: list[ProductWrite],
 ) -> ScoringRead:
+    check_if_pioneer(user_data)
     if check_user_for_immediate_rejection(user_data):
         return ScoringRead(decision='rejected', product=None)
     user_score = scoring_process(user_data=user_data)

@@ -12,7 +12,7 @@ from app.constants import (
 )
 
 
-class UserWrite(BaseModel):
+class UserPhoneWrite(BaseModel):
     """Схема клиента для записи при выборе флоу."""
     phone: str
 
@@ -65,10 +65,10 @@ class ScoringRead(BaseModel):
     product: ProductRead | None
 
 
-class UserDataWrite(UserWrite):
+class ScoringUserDataWrite(UserWrite):
     """Схема данных пользователя для записи скоринга."""
-    age: int
-    monthly_income: int
+    age: PositiveInt
+    monthly_income: PositiveInt
     employment_type: str
     has_property: bool
 
@@ -76,8 +76,3 @@ class UserDataWrite(UserWrite):
 class ProductWrite(ProductRead):
     """Схема продукта для записи."""
     pass
-
-
-class ScoringWrite(ProductWrite):
-    """Схема данных для записи скоринга."""
-    user_data: UserDataWrite

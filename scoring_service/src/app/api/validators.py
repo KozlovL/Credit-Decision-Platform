@@ -1,0 +1,1 @@
+def check_if_pioneer(user_data: ):
