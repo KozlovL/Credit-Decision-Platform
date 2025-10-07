@@ -1,9 +1,9 @@
 from common.repository.product import AVAILABLE_PRODUCT_LIST
+from common.repository.user import add_user, USERS_PHONES
 from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter
 
 from app.constants import PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE
-from app.repository.user import USERS_PHONES, add_user
 from app.schemas.product import ProductListRead
 
 router = APIRouter(prefix='/products', tags=['products'])
