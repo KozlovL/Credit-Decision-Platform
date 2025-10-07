@@ -3,7 +3,7 @@ from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter
 
 from app.constants import PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE
-from app.repository.product import CUSTOMERS_PHONES, add_customer
+from app.repository.user import USERS_PHONES, add_user
 from app.schemas.product import ProductListRead
 
 router = APIRouter(prefix='/products', tags=['products'])
@@ -15,15 +15,15 @@ router = APIRouter(prefix='/products', tags=['products'])
     summary='Выбор флоу по номеру телефона',
 )
 def select_flow(
-        customer: UserPhoneWrite,
+        user: UserPhoneWrite,
 ) -> ProductListRead:
-    if customer.phone in CUSTOMERS_PHONES:
+    if user.phone in USERS_PHONES:
         return ProductListRead(
             flow_type=REPEATER_FLOW_TYPE,
             available_products=[],
         )
     # Записываем нового пользователя в "БД"
-    add_customer(customer.phone)
+    add_user(user.phone)
     return ProductListRead(
         flow_type=PIONEER_FLOW_TYPE,
         available_products=AVAILABLE_PRODUCT_LIST,

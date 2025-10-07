@@ -11,8 +11,8 @@ from app.constants import (
 
 
 def test_valid_phone(pioneer_phone):
-    customer = UserPhoneWrite(phone=pioneer_phone)
-    assert customer.phone == pioneer_phone
+    user = UserPhoneWrite(phone=pioneer_phone)
+    assert user.phone == pioneer_phone
 
 
 @pytest.mark.parametrize('phone', (

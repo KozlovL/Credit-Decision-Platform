@@ -4,7 +4,7 @@ from app.constants import (
 )
 
 # База данных номеров
-CUSTOMERS_PHONES = [
+USERS_PHONES = [
     '71111111111',
     '72222222222',
     '73333333333',
@@ -17,9 +17,9 @@ CUSTOMERS_PHONES = [
 ]
 
 
-def add_customer(phone: str) -> None:
+def add_user(phone: str) -> None:
     """Функция добавления пользователя в базу данных."""
-    CUSTOMERS_PHONES.append(phone)
+    USERS_PHONES.append(phone)
 
 
 # база данных типов флоу
