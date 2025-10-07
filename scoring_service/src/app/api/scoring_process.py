@@ -1,24 +1,35 @@
+from common.schemas.product import ProductRead
+
+from app.constants import (
+    ADULT_AGE,
+    AVERAGE_AGE,
+    AVERAGE_INCOME,
+    FREELANCE_STR,
+    HIGH_INCOME,
+    LOW_INCOME,
+    OLD_AGE,
+    UNEMPLOYED_STR,
+)
 from app.schemas.scoring import (
-    UserDataWrite, ProductRead, ProductWrite,
+    ProductWrite,
+    ScoringUserDataWrite,
 )
 
 
-def check_user_for_immediate_rejection(user_data: UserDataWrite) -> bool:
+def check_user_for_immediate_rejection(user_data: ScoringUserDataWrite) -> bool:
     """Функция проверки пользователя на немедленный отказ."""
-    if (
-            user_data.age < 18
-            or user_data.monthly_income < 1000000
-            or user_data.employment_type > 'unemployed'
-           ):
-        return True
-    return False
+    return (
+            user_data.age < ADULT_AGE
+            or user_data.monthly_income < LOW_INCOME
+            or user_data.employment_type == UNEMPLOYED_STR
+    )
 
 
 def score_age(age: int) -> int:
     """Функция скоринга возраста."""
-    if age < 25:
+    if age <= AVERAGE_AGE:
         score = 1
-    elif age < 40:
+    elif age <= OLD_AGE:
         score = 3
     else:
         score = 2
@@ -27,9 +38,9 @@ def score_age(age: int) -> int:
 
 def score_monthly_income(monthly_income: int) -> int:
     """Функция скоринга ежемесячного дохода."""
-    if monthly_income < 3000000:
+    if monthly_income < AVERAGE_INCOME:
         score = 1
-    elif monthly_income < 5000000:
+    elif monthly_income < HIGH_INCOME:
         score = 2
     else:
         score = 3
@@ -38,23 +49,15 @@ def score_monthly_income(monthly_income: int) -> int:
 
 def score_employment_type(employment_type: str) -> int:
     """Функция скоринга типа занятости."""
-    if employment_type == 'freelance':
-        score = 1
-    else:
-        score = 3
-    return score
+    return 1 if employment_type == FREELANCE_STR else 3
 
 
 def score_property(has_property: bool) -> int:
     """Функция скоринга недвижимостю"""
-    if has_property:
-        score = 2
-    else:
-        score = 0
-    return score
+    return 2 if has_property else 0
 
 
-def scoring_process(user_data: UserDataWrite):
+def scoring_process(user_data: ScoringUserDataWrite) -> int:
     """Функция скоринга пользователя."""
     age = user_data.age
     monthly_income = user_data.monthly_income
@@ -99,7 +102,6 @@ def check_products_with_score(
             ):
                 # переходим на следующую итерацию...
                 continue
-            else:
-                # иначе предлагаем новый продукт
-                current_product = new_product
+            # иначе предлагаем новый продукт
+            current_product = new_product
     return current_product

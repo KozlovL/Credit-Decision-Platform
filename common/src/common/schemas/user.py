@@ -1,15 +1,16 @@
 from http import HTTPStatus
 
+from fastapi import HTTPException
 from pydantic import ConfigDict, field_validator, BaseModel
 
-from src.common.constants.user import PHONE_REGEX
+from common.constants import PHONE_REGEX, PHONE_JSON_FIELD_NAME
 
 
 class UserPhoneWrite(BaseModel):
     """Схема клиента для записи при выборе флоу."""
     phone: str
 
-    @field_validator('phone')
+    @field_validator(PHONE_JSON_FIELD_NAME)
     def validate_phone(cls, phone: str) -> str | None:
         if not PHONE_REGEX.match(phone):
             raise HTTPException(

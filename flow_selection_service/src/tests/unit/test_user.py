@@ -1,13 +1,12 @@
 import pytest
+from common.constants import (
+    NULL_PHONE_NUMBER, NOT_STR_PHONE_NUMBER,
+    INCORRECT_LENGTH_PHONE, INCORRECT_FIRST_SYMBOL_PHONE,
+    INCORRECT_SYMBOL_PHONE, EMPTY_PHONE_NUMBER,
+)
 from common.schemas.user import UserPhoneWrite
 from fastapi import HTTPException
 from pydantic import ValidationError
-
-from app.constants import (
-    INCORRECT_LENGTH_PHONE,
-    INCORRECT_FIRST_SYMBOL_PHONE, INCORRECT_SYMBOL_PHONE, NULL_PHONE_NUMBER,
-    EMPTY_PHONE_NUMBER, NOT_STR_PHONE_NUMBER,
-)
 
 
 def test_valid_phone(pioneer_phone):

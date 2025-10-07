@@ -1,11 +1,10 @@
 import pytest
-from fastapi.testclient import TestClient
-
-from app.constants import (
-    PIONEER_PHONE_NUMBER,
-    REPEATER_PHONE_NUMBER,
+from common.constants import (
+    PIONEER_PHONE_NUMBER, REPEATER_PHONE_NUMBER,
     PHONE_JSON_FIELD_NAME,
 )
+from fastapi.testclient import TestClient
+
 from app.service import app
 
 

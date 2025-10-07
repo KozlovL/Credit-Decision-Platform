@@ -9,16 +9,22 @@ stages:
   tags:
     - docker
   before_script:
+    - cd $SERVICE
     - pip install poetry
-    - cd flow_selection_service
     - export PYTHONPATH="$(pwd)/src"
     - poetry install --no-root
+  cache:
+    key:
+      files:
+        - $SERVICE/poetry.lock
+    paths:
+      - /root/.cache/pypoetry
+      - /root/.cache/pip
   rules:
-    # first match wins
     - changes:
         - "**/*.py"
         - ".gitlab-ci.yml"
-        - "poetry.lock"
+        - "$SERVICE/poetry.lock"
       when: on_success
     - changes:
         - "**.md"
@@ -28,30 +34,33 @@ stages:
 lint_job:
   extends: .base
   stage: linting
+  parallel:
+    matrix:
+      - SERVICE: flow_selection_service
+      - SERVICE: scoring_service
   script:
     - poetry run ruff check .
 
 mypy_job:
   extends: .base
   stage: type-checking
+  parallel:
+    matrix:
+      - SERVICE: flow_selection_service
+      - SERVICE: scoring_service
   script:
     - poetry run mypy .
 
-testing_job:
+test_job:
   extends: .base
   stage: testing
+  parallel:
+    matrix:
+      - SERVICE: flow_selection_service
+      - SERVICE: scoring_service
   script:
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
-
-cache:
-  key:
-    files:
-      - poetry.lock
-    prefix: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - /root/.cache/pypoetry
-    - /root/.cache/pip
 
 workflow:
   rules:
