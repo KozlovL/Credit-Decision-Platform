@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from app.constants import REPEATER_FLOW_TYPE, PIONEER_FLOW_TYPE
+from app.constants import PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE
 from app.repository.product import AVAILABLE_PRODUCT_LIST, CUSTOMERS_PHONES
-from app.schemas.product import ProductListRead, CustomerWrite
+from app.schemas.product import CustomerWrite, ProductListRead
 
 router = APIRouter(prefix='/products', tags=['products'])
 
@@ -14,13 +14,13 @@ router = APIRouter(prefix='/products', tags=['products'])
 )
 def select_flow(
         customer: CustomerWrite,
-):
+) -> ProductListRead:
     if customer.phone in CUSTOMERS_PHONES:
-        return {
-            'flow_type': REPEATER_FLOW_TYPE,
-            'available_products': []
-        }
-    return {
-            'flow_type': PIONEER_FLOW_TYPE,
-            'available_products': AVAILABLE_PRODUCT_LIST
-        }
+        return ProductListRead(
+            flow_type=REPEATER_FLOW_TYPE,
+            available_products=[],
+        )
+    return ProductListRead(
+        flow_type=PIONEER_FLOW_TYPE,
+        available_products=AVAILABLE_PRODUCT_LIST,
+    )

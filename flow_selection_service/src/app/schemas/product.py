@@ -1,14 +1,15 @@
 from http import HTTPStatus
 
 from fastapi import HTTPException
-from pydantic import BaseModel, Field, field_validator, PositiveInt, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, PositiveInt, field_validator
 
 from app.constants import (
-    PRODUCT_NAME_MIN_LENGTH,
-    PRODUCT_NAME_MAX_LENGTH, INTEREST_RATE_DAILY_MIN_LENGTH,
     INTEREST_RATE_DAILY_MAX_LENGTH,
+    INTEREST_RATE_DAILY_MIN_LENGTH,
+    PHONE_REGEX,
+    PRODUCT_NAME_MAX_LENGTH,
+    PRODUCT_NAME_MIN_LENGTH,
 )
-from app.constants import PHONE_REGEX
 
 
 class CustomerWrite(BaseModel):
@@ -16,7 +17,7 @@ class CustomerWrite(BaseModel):
     phone: str
 
     @field_validator('phone')
-    def validate_phone(cls, phone):
+    def validate_phone(cls, phone: str) -> str | None:
         if not PHONE_REGEX.match(phone):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,

@@ -27,7 +27,7 @@ def test_valid_phone(pioneer_phone):
 ))
 def test_invalid_type_phone(phone):
     with pytest.raises(ValidationError):
-        CustomerWrite(phone=phone)  # type: ignore
+        CustomerWrite(phone=phone)
 
 
 @pytest.mark.parametrize('phone', (
