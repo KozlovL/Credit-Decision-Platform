@@ -8,12 +8,10 @@
 
 ## Сервис: scoring_service
 
-Эндпоинт для скоринга нового пользователя:
-
 ### POST `/api/scoring/pioneer`
 
 **Описание:**  
-Процесс скоринга пользователя и подбор подходящего продукта.
+Процесс скоринга пользователя и подбор подходящего продукта для первичника.
 
 **Request body (JSON):**
 
@@ -88,6 +86,85 @@ curl -X 'POST' \
 
 ---
 
+### POST `/api/scoring/repeater`
+
+**Описание:**  
+Процесс скоринга пользователя и подбор подходящего продукта для повторника.  
+Пользователь должен уже существовать в "БД".
+
+**Request body (JSON):**
+
+```json
+{
+  "user_data": {
+    "phone": "79123456789",
+    "age": 35,
+    "monthly_income": 50000,
+    "employment_type": "full_time",
+    "has_property": true
+  },
+  "products": [
+    {
+      "name": "LoyaltyLoan",
+      "max_amount": 10000000,
+      "term_days": 30,
+      "interest_rate_daily": "2.0"
+    },
+    {
+      "name": "AdvantagePlus",
+      "max_amount": 25000000,
+      "term_days": 60,
+      "interest_rate_daily": "1.8"
+    },
+    {
+      "name": "PrimeCredit",
+      "max_amount": 100000000,
+      "term_days": 120,
+      "interest_rate_daily": "1.3"
+    }
+  ]
+}
+```
+
+**Пример ответа (200 OK):**
+
+```json
+{
+  "decision": "accepted",
+  "product": {
+    "name": "AdvantagePlus",
+    "max_amount": 25000000,
+    "term_days": 60,
+    "interest_rate_daily": "1.8"
+  }
+}
+```
+
+**Curl пример:**
+
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/api/scoring/repeater' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+"user_data": {
+  "phone": "79123456789",
+  "age": 35,
+  "monthly_income": 50000,
+  "employment_type": "full_time",
+  "has_property": true
+},
+"products": [
+  {"name": "LoyaltyLoan","max_amount":10000000,"term_days":30,"interest_rate_daily":"2.0"},
+  {"name": "AdvantagePlus","max_amount":25000000,"term_days":60,"interest_rate_daily":"1.8"},
+  {"name": "PrimeCredit","max_amount":100000000,"term_days":120,"interest_rate_daily":"1.3"}
+]
+}'
+```
+
+---
+
 ## Инструкция по запуску
 
 **Требования:**
@@ -98,7 +175,7 @@ curl -X 'POST' \
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3473 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3556 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -135,7 +212,7 @@ poetry run --directory scoring_service uvicorn app.service:app
 ```
 
 - Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
-- Эндпоинт `/api/scoring/pioneer` готов к тестированию.
+- Эндпоинты `/api/scoring/pioneer` и `/api/scoring/repeater` готовы к тестированию.
 - Документация доступна по адресу: `http://127.0.0.1:8000/docs`.
 
 ---
@@ -151,6 +228,6 @@ poetry run --directory scoring_service pytest -v
 **Примечание:**
 
 - Все команды выполняются из корня проекта после клонирования.
-- Все импорты внутри проекта настроены так, чтобы начинаться с `app` (например, `from app.api.router import main_router`).
+- Все импорты внутри проекта настроены так, чтобы начинаться с `app`.
 - Для корректной работы убедитесь, что PYTHONPATH установлен на папку `src`.
 
