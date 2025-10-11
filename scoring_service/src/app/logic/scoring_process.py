@@ -1,15 +1,20 @@
-from datetime import date, timedelta
+from datetime import UTC, datetime, timedelta
 
-from common.constants import EmploymentType, CreditStatus
+from common.constants import CreditStatus, EmploymentType
 from common.repository.user import CreditHistory
 from common.schemas.product import ProductWrite
 from common.schemas.user import UserDataWrite
 
 from app.constants import (
-    AgeType, MonthlyIncomeType,
-    MIN_PIONEER_SCORE_FOR_PRODUCT, MIN_REPEATER_SCORE_FOR_PRODUCT, REJECTED_STR,
-    ACCEPTED_STR, CREDIT_EXPIRATION_DAYS, FIRST_CREDIT_DAYS_TO_GET_SCORE,
+    ACCEPTED_STR,
+    CREDIT_EXPIRATION_DAYS,
+    FIRST_CREDIT_DAYS_TO_GET_SCORE,
+    MIN_PIONEER_SCORE_FOR_PRODUCT,
+    MIN_REPEATER_SCORE_FOR_PRODUCT,
+    REJECTED_STR,
+    AgeType,
     LastCreditAmountTypes,
+    MonthlyIncomeType,
 )
 from app.repository.product import (
     get_available_pioneer_products_with_score,
@@ -34,8 +39,9 @@ class ScoringBase:
         self.credit_history = credit_history
         self.products = products
 
-    def immediate_rejection(self) -> None:
+    def immediate_rejection(self) -> bool:
         """Метод проверки немедленного отказа."""
+        return True
 
     def score_age(self, age: int) -> int:
         """Метод скоринга возраста."""
@@ -61,7 +67,7 @@ class ScoringBase:
         """Метод скоринга типа занятости."""
         if employment_type == EmploymentType.FULL_TIME:
             return 3
-        elif employment_type == EmploymentType.FREELANCE:
+        if employment_type == EmploymentType.FREELANCE:
             return 1
         return 0
 
@@ -80,7 +86,7 @@ class ScoringBase:
         score = 0
         # Если первый кредит был взят больше года назад, возвращаем 3
         if (
-                date.today() - first_note.issue_date
+                datetime.now(UTC).date() - first_note.issue_date
                 > timedelta(days=FIRST_CREDIT_DAYS_TO_GET_SCORE)
         ):
             score += 3
@@ -127,10 +133,10 @@ class ScoringBase:
                 if (
                         current_product is not None
                         and (
-                            self.available_products_with_score[
-                                current_product.name
-                            ]
-                            >= new_product_score
+                        self.available_products_with_score[
+                            current_product.name
+                        ]
+                        >= new_product_score
                         )
                 ):
                     # Переходим на следующую итерацию...
@@ -189,13 +195,13 @@ class ScoringRepeater(ScoringBase):
     def has_debt(self) -> bool:
         """Метод, возвращающий True, если в кредитной истории есть долг."""
         # Проходим по всем записям
-        for credit_note in self.credit_history:
+        for credit_note in self.credit_history or []:
             # Если кредит закрыт, то идем на следующую итерацию
             if credit_note.status is CreditStatus.CLOSED:
                 continue
             # Иначе проверяем просрочку на 180 дней
             if (
-                    date.today() - credit_note.issue_date
+                    datetime.now(UTC).date() - credit_note.issue_date
                     > timedelta(days=CREDIT_EXPIRATION_DAYS)
             ):
                 return True

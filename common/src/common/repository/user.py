@@ -18,7 +18,7 @@ class CreditHistory:
         self.amount = product_data.max_amount
         self.issue_date = date.today()
         self.term_days = product_data.term_days
-        self.status: CreditStatus = CreditStatus.OPEN
+        self.status: CreditStatusType = CreditStatusType.OPEN
         self.close_date: date | None = None
 
 

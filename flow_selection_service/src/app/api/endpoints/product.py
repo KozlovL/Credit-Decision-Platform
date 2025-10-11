@@ -1,5 +1,3 @@
-from common.repository.user import get_users
-from common.schemas.product import ProductRead
 from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter
 
@@ -11,8 +9,8 @@ from app.constants import (
 )
 from app.logic.user import is_repeater
 from app.repository.products import (
-    get_available_repeater_products,
     get_available_pioneer_products,
+    get_available_repeater_products,
 )
 from app.schemas.product import FlowProductRead
 

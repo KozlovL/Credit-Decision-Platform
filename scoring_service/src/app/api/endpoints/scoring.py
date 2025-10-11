@@ -7,18 +7,20 @@ from app.api.validators.pioneer import (
 )
 from app.api.validators.repeater import (
     get_user_or_404_by_phone,
-
 )
 from app.constants import (
-    PIONEER_PREFIX,
-    SCORING_PREFIX,
-    SCORING_TAG, REPEATER_PREFIX, MIN_PIONEER_SCORE_FOR_PRODUCT,
+    MIN_PIONEER_SCORE_FOR_PRODUCT,
     MIN_REPEATER_SCORE_FOR_PRODUCT,
+    PIONEER_PREFIX,
+    REPEATER_PREFIX,
+    SCORING_PREFIX,
+    SCORING_TAG,
 )
 from app.logic.scoring_process import ScoringPioneer, ScoringRepeater
 from app.repository.product import (
+    get_available_pioneer_product_names,
     get_available_pioneer_products_with_score,
-    get_available_pioneer_product_names, get_available_repeater_product_names,
+    get_available_repeater_product_names,
     get_available_repeater_products_with_score,
 )
 from app.schemas.scoring import (
@@ -90,7 +92,7 @@ def scoring_repeater(
 
     # Проверяем существуют ли переданные продукты
     check_products_are_exists(
-        products=data.products,
+        products=products,
         available_products=get_available_repeater_product_names()
     )
 
@@ -99,7 +101,7 @@ def scoring_repeater(
     # Создаем класс скоринга повторника
     repeater_scoring = ScoringRepeater(
         user_data=data.user_data,
-        products=data.products,
+        products=products,
         min_score_for_acceptance=MIN_REPEATER_SCORE_FOR_PRODUCT,
         available_products_with_score=(
             get_available_repeater_products_with_score()

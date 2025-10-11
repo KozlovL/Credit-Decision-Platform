@@ -1,13 +1,12 @@
 from http import HTTPStatus
 
+from common.schemas.product import ProductWrite
 from fastapi import HTTPException
-
-from app.schemas.scoring import ProductWrite
 
 
 def check_products_are_exists(
         products: list[ProductWrite],
-        available_products: list
+        available_products: list[str]
 ) -> None:
     """Проверка существует ли данный на вход продукт."""
     for product in products:

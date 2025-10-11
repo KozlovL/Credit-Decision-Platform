@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 import pytest
-from common.constants import EmploymentType
+from common.constants import EmploymentType, CreditStatus
 from common.repository.user import USERS, add_user
 from common.schemas.product import ProductWrite
 from common.schemas.user import UserDataWrite
@@ -10,7 +10,7 @@ from starlette.testclient import TestClient
 from app.constants import (
     LOYALTY_LOAN_STR, PRIME_CREDIT_STR,
     ADVANTAGE_PLUS_STR, MICROLOAN_STR, QUICK_MONEY_STR, CONSUMER_LOAN_STR,
-    AgeType, CreditStatusType,
+    AgeType,
 )
 from app.service import app
 
@@ -111,7 +111,7 @@ def existing_user_with_debt():
     )
     user.add_credit_note(product)
     # Просроченный кредит
-    user.credit_history[-1].status = CreditStatusType.OPEN
+    user.credit_history[-1].status = CreditStatus.OPEN
     user.credit_history[-1].issue_date = date.today() - timedelta(days=400)
     return user
 

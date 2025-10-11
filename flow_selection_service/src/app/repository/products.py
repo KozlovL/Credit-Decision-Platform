@@ -4,14 +4,14 @@ from json import load
 from common.schemas.product import ProductRead
 
 from app.constants import (
-    REPEATER_PRODUCTS_JSON_PATH,
     PIONEER_PRODUCTS_JSON_PATH,
+    REPEATER_PRODUCTS_JSON_PATH,
 )
 
-with open(PIONEER_PRODUCTS_JSON_PATH, 'r', encoding='utf-8') as file:
+with open(PIONEER_PRODUCTS_JSON_PATH, encoding='utf-8') as file:
     PIONEER_PRODUCTS = load(file)
 
-with open(REPEATER_PRODUCTS_JSON_PATH, 'r', encoding='utf-8') as file:
+with open(REPEATER_PRODUCTS_JSON_PATH, encoding='utf-8') as file:
     REPEATER_PRODUCTS = load(file)
 
 

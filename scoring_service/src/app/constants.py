@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum
+from enum import IntEnum
 
 from common.constants import API_PREFIX
 
@@ -45,9 +45,3 @@ class LastCreditAmountTypes(IntEnum):
     """Типы объема последнего кредита."""
     LOW_AMOUNT = 5000000
     AVERAGE_AMOUNT = 10000001
-
-
-class CreditStatusType(str, Enum):
-    """Статусы кредита."""
-    OPEN = 'open'
-    CLOSED = 'closed'

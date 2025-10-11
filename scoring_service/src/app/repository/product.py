@@ -1,6 +1,10 @@
 from app.constants import (
-    MICROLOAN_STR, QUICK_MONEY_STR, CONSUMER_LOAN_STR,
-    LOYALTY_LOAN_STR, PRIME_CREDIT_STR, ADVANTAGE_PLUS_STR,
+    ADVANTAGE_PLUS_STR,
+    CONSUMER_LOAN_STR,
+    LOYALTY_LOAN_STR,
+    MICROLOAN_STR,
+    PRIME_CREDIT_STR,
+    QUICK_MONEY_STR,
 )
 
 # Словари с названиями продуктов и соответствующими им оценками
