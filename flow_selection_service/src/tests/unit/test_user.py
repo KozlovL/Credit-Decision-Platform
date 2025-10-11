@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 
 def test_valid_phone(pioneer_phone):
+    """Тест валидных номеров телефона."""
     user = UserPhoneWrite(phone=pioneer_phone)
     assert user.phone == pioneer_phone
 
@@ -25,6 +26,7 @@ def test_valid_phone(pioneer_phone):
     ),
 ))
 def test_invalid_type_phone(phone):
+    """Тест неверных типов данных номера телефона."""
     with pytest.raises(ValidationError):
         UserPhoneWrite(phone=phone)
 
@@ -48,5 +50,6 @@ def test_invalid_type_phone(phone):
     ),
 ))
 def test_invalid_phone(phone):
+    """Тест невалидных номеров телефона."""
     with pytest.raises(HTTPException):
         UserPhoneWrite(phone=phone)

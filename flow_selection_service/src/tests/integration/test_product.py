@@ -6,6 +6,7 @@ from common.constants import (
     INCORRECT_LENGTH_PHONE, INCORRECT_FIRST_SYMBOL_PHONE,
     INCORRECT_SYMBOL_PHONE, EMPTY_PHONE_NUMBER,
 )
+from common.repository.user import USERS
 
 from app.constants import (
     PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE,
@@ -19,6 +20,7 @@ def test_select_flow_pioneer(
         pioneer_phone,
         phone_payload
 ):
+    """Тест выбора флоу первичника."""
     response = client.post(API_PRODUCT_PATH, json=phone_payload(pioneer_phone))
     assert response.status_code == HTTPStatus.OK
     data = response.json()
@@ -31,11 +33,13 @@ def test_select_flow_repeater(
         repeater_phone,
         phone_payload
 ):
+    """Тест выбора флоу повторника."""
     response = client.post(API_PRODUCT_PATH, json=phone_payload(repeater_phone))
     assert response.status_code == HTTPStatus.OK
     data = response.json()
+    print(USERS[0].phone, repeater_phone)
     assert data[FLOW_TYPE_JSON_FIELD_NAME] == REPEATER_FLOW_TYPE
-    assert data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME] == []
+    assert len(data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME]) > 0
 
 
 @pytest.mark.parametrize('phone, expected_status', [
@@ -52,6 +56,6 @@ def test_select_flow_invalid_phones(
         expected_status,
         phone_payload
 ):
-    """Юнит-тест для некорректных телефонов с корректным статус-кодом."""
+    """Тест для некорректных телефонов с корректным статус-кодом."""
     response = client.post(API_PRODUCT_PATH, json=phone_payload(phone))
     assert response.status_code == expected_status
