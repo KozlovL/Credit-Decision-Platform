@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "flow-selection-service"
+name = "scoring-service"
 version = "0.1.0"
 description = ""
 authors = ["Kozlov Leonid <jimjpoggers@yandex.ru>"]
