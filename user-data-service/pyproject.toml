@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "user-data-service"
+version = "0.1.0"
+description = ""
+authors = ["Kozlov Leonid <jimjpoggers@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.118.0"
+uvicorn = "^0.37.0"
+common = {path = "../common", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+httpx = "^0.28.1"
+ruff = "^0.13.3"
+mypy = "^1.18.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
