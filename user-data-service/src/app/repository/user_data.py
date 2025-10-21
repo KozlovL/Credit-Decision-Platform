@@ -1,7 +1,9 @@
 from common.repository.user import CreditHistory, User
 
 from app.schemas.user_data import (
-    LoanUpdate, CreditHistoryRead, LoanCreate,
+    CreditHistoryRead,
+    LoanCreate,
+    LoanUpdate,
 )
 
 

@@ -1,13 +1,13 @@
 from datetime import date
 from http import HTTPStatus
 
-from common.repository.user import get_user_by_phone, User
+from common.repository.user import User, get_user_by_phone
 from common.schemas.user import UserPhoneWrite
 from fastapi import HTTPException
 from pydantic import ValidationError
 
 from app.constants import AVAILABLE_PRODUCTS
-from app.schemas.user_data import LoanCreateOrUpdate, LoanUpdate, LoanCreate
+from app.schemas.user_data import LoanCreate, LoanUpdate
 
 
 def get_user_or_404_by_phone(phone: str) -> User:
@@ -23,7 +23,7 @@ def get_user_or_404_by_phone(phone: str) -> User:
 
 def check_products_exists(
     product: str
-):
+) -> None:
     """Функция, проверяющая существует ли переданный продукт."""
     if product not in AVAILABLE_PRODUCTS:
         raise HTTPException(
@@ -44,7 +44,7 @@ def validate_phone(phone: str) -> None:
                 'Номер телефона должен быть строкой из 11 цифр и '
                 'начинаться на 7'
             )
-        )
+        ) from error
 
 
 def validate_loan_update_data(loan_data: LoanUpdate) -> LoanUpdate:
@@ -60,7 +60,7 @@ def validate_loan_update_data(loan_data: LoanUpdate) -> LoanUpdate:
         raise HTTPException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
             detail=errors
-        )
+        ) from error
     return loan_data
 
 
@@ -72,5 +72,5 @@ def validate_loan_create_data(loan_data: LoanCreate) -> LoanCreate:
         raise HTTPException(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
             detail=error.errors()
-        )
+        ) from error
     return loan_data

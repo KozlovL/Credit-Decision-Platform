@@ -1,26 +1,35 @@
 import json
+from http import HTTPStatus
 from typing import Annotated
 
 from common.constants import EmploymentType
 from common.repository.user import (
-    get_user_by_phone, update_user, add_user,
+    add_user,
+    get_user_by_phone,
+    update_user,
 )
 from common.schemas.user import ProfileWrite, UserDataPhoneWrite
-from fastapi import APIRouter, Query, Body
+from fastapi import APIRouter, Body, Query, HTTPException
 from starlette import status
 from starlette.responses import JSONResponse
 
 from app.api.validators import (
-    get_user_or_404_by_phone, check_products_exists,
-    validate_phone, validate_loan_update_data, validate_loan_create_data,
+    check_products_exists,
+    get_user_or_404_by_phone,
+    validate_loan_create_data,
+    validate_loan_update_data,
+    validate_phone,
 )
 from app.constants import USER_DATA_PREFIX, USER_DATA_TAG
 from app.repository.user_data import (
+    create_existing_credit_note,
+    get_credit_history,
     update_credit_note,
-    create_existing_credit_note, get_credit_history,
 )
 from app.schemas.user_data import (
-    UserDataRead, LoanCreateOrUpdate, LoanCreate, LoanUpdate,
+    LoanCreate,
+    LoanUpdate,
+    UserDataRead,
 )
 
 router = APIRouter(prefix=USER_DATA_PREFIX, tags=[USER_DATA_TAG])
@@ -69,7 +78,9 @@ def update_user_data(
     # Достаем телефон из схемы
     validate_phone(phone=phone)
     user = None
-    created = False
+
+    # Флаг для определения статус-кода в ответе
+    created = None
 
     # Сценарий создания или обновления профиля
     if profile is not None:
@@ -84,6 +95,8 @@ def update_user_data(
                     **profile.model_dump()
                 ),
             )
+
+            created = False
         # Иначе создаем
         else:
             user = add_user(
@@ -92,6 +105,7 @@ def update_user_data(
                     **profile.model_dump()
                 )
             )
+
             created = True
 
     # Сценарии добавления и обновления записи в кредитной истории
@@ -104,37 +118,51 @@ def update_user_data(
             # Если нашли
             if loan_entry.loan_id == credit_note.loan_id:
                 # Валидируем данные
-                loan_data = validate_loan_update_data(loan_data=loan_entry)
+                loan_data = validate_loan_update_data(
+                    loan_data=loan_entry  # type: ignore
+                )
 
                 # Обновляем запись в кредитной истории
                 update_credit_note(
                     credit_note=credit_note,
                     loan_data=loan_data,
                 )
+
+                created = False
                 break
         else:
             # Валидируем данные
-            loan_data = validate_loan_create_data(loan_data=loan_entry)
+            loan_data = validate_loan_create_data(  # type: ignore
+                loan_data=loan_entry  # type: ignore
+            )
 
             # Проверяем продукт на существование
             check_products_exists(
-                product=loan_data.product_name
+                product=loan_data.product_name  # type: ignore
             )
 
             # Создаем запись
             new_credit_note = create_existing_credit_note(
-                loan_entry=loan_data,
+                loan_entry=loan_data,  # type: ignore
             )
             # Добавляем запись в кредитную историю
             user.add_existing_credit_note(
                 credit_note=new_credit_note
             )
 
+            created = False
+
+    if created is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Нужно ввести либо profile, либо loan_entry'
+        )
+
     # Формируем ответ
     response_data = UserDataRead(
         phone=phone,
-        profile=user.get_profile(),
-        history=get_credit_history(user=user)
+        profile=user.get_profile(),  # type: ignore
+        history=get_credit_history(user=user)  # type: ignore
     )
 
     return JSONResponse(
