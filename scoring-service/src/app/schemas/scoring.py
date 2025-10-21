@@ -1,8 +1,10 @@
 from common.schemas.product import (
-    ProductWrite, ProductRead,
+    ProductRead,
+    ProductWrite,
 )
 from common.schemas.user import (
-    UserDataPhoneWrite, UserPhoneWrite,
+    UserDataPhoneWrite,
+    UserPhoneWrite,
 )
 from pydantic import BaseModel, ConfigDict
 

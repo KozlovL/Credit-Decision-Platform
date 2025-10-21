@@ -9,7 +9,7 @@ from common.repository.user import (
     update_user,
 )
 from common.schemas.user import ProfileWrite, UserDataPhoneWrite
-from fastapi import APIRouter, Body, Query, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Query
 from starlette import status
 from starlette.responses import JSONResponse
 
@@ -119,7 +119,7 @@ def update_user_data(
             if loan_entry.loan_id == credit_note.loan_id:
                 # Валидируем данные
                 loan_data = validate_loan_update_data(
-                    loan_data=loan_entry  # type: ignore
+                    loan_data=loan_entry  # type: ignore[arg-type]
                 )
 
                 # Обновляем запись в кредитной истории
@@ -132,18 +132,18 @@ def update_user_data(
                 break
         else:
             # Валидируем данные
-            loan_data = validate_loan_create_data(  # type: ignore
-                loan_data=loan_entry  # type: ignore
+            loan_data = validate_loan_create_data(  # type: ignore[assignment]
+                loan_data=loan_entry  # type: ignore[arg-type]
             )
 
             # Проверяем продукт на существование
             check_products_exists(
-                product=loan_data.product_name  # type: ignore
+                product=loan_data.product_name  # type: ignore[attr-defined]
             )
 
             # Создаем запись
             new_credit_note = create_existing_credit_note(
-                loan_entry=loan_data,  # type: ignore
+                loan_entry=loan_data,  # type: ignore[arg-type]
             )
             # Добавляем запись в кредитную историю
             user.add_existing_credit_note(
@@ -161,8 +161,8 @@ def update_user_data(
     # Формируем ответ
     response_data = UserDataRead(
         phone=phone,
-        profile=user.get_profile(),  # type: ignore
-        history=get_credit_history(user=user)  # type: ignore
+        profile=user.get_profile(),  # type: ignore[union-attr]
+        history=get_credit_history(user=user)  # type: ignore[arg-type]
     )
 
     return JSONResponse(
