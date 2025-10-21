@@ -84,7 +84,7 @@ cd shift_project
 ### 2. Создание виртуального окружения через Poetry
 
 ```bash
-poetry install --no-root --directory flow_selection_service
+poetry install --no-root --directory flow-selection-service
 ```
 
 ---
@@ -108,7 +108,7 @@ export PYTHONPATH="$(pwd)/flow_selection_service/src"
 ### 4. Запуск сервиса
 
 ```bash
-poetry run --directory flow_selection_service uvicorn app.service:app
+poetry run --directory flow-selection-service uvicorn app.service:app
 ```
 
 - Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
@@ -120,7 +120,7 @@ poetry run --directory flow_selection_service uvicorn app.service:app
 ### 5. Запуск тестов
 
 ```bash
-poetry run --directory flow_selection_service pytest -v
+poetry run --directory flow-selection-service pytest -v
 ```
 
 ---
