@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from common.constants import CreditStatus, EmploymentType
 from common.repository.user import CreditHistory
 from common.schemas.product import ProductWrite
-from common.schemas.user import UserDataWrite
+from common.schemas.user import UserDataPhoneWrite
 
 from app.constants import (
     ACCEPTED_STR,
@@ -27,7 +27,7 @@ class ScoringBase:
 
     def __init__(
             self,
-            user_data: UserDataWrite,
+            user_data: UserDataPhoneWrite,
             available_products_with_score: dict[str, int],
             min_score_for_acceptance: int,
             products: list[ProductWrite],

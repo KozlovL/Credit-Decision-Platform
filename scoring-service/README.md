@@ -184,7 +184,7 @@ cd shift_project
 ### 2. Создание виртуального окружения через Poetry
 
 ```bash
-poetry install --no-root --directory scoring_service
+poetry install --no-root --directory scoring-service
 ```
 
 ---
@@ -208,7 +208,7 @@ export PYTHONPATH="$(pwd)/scoring_service/src"
 ### 4. Запуск сервиса
 
 ```bash
-poetry run --directory scoring_service uvicorn app.service:app
+poetry run --directory scoring-service uvicorn app.service:app
 ```
 
 - Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
@@ -220,7 +220,7 @@ poetry run --directory scoring_service uvicorn app.service:app
 ### 5. Запуск тестов
 
 ```bash
-poetry run --directory scoring_service pytest -v
+poetry run --directory scoring-service pytest -v
 ```
 
 ---
