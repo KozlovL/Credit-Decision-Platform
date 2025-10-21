@@ -60,6 +60,7 @@ test_job:
     matrix:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
+      - SERVICE: user-data-service
   script:
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
