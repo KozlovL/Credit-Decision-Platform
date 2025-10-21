@@ -8,7 +8,7 @@
 
 ## Сервис: user-data-service
 
-### POST `/api/user_data`
+### PUT `/api/user_data`
 **Описание:** Создание нового пользователя.
 
 **Пример request body:**
