@@ -51,5 +51,5 @@ def test_invalid_type_phone(phone):
 ))
 def test_invalid_phone(phone):
     """Тест невалидных номеров телефона."""
-    with pytest.raises(HTTPException):
+    with pytest.raises(ValidationError):
         UserPhoneWrite(phone=phone)
