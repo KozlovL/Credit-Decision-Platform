@@ -44,6 +44,6 @@ def test_invalid_user_profile(
             phone=phone,
             age=age,
             monthly_income=monthly_income,
-            employment_type=employment_type,  # type: ignore
+            employment_type=employment_type,
             has_property=has_property
         )
