@@ -9,8 +9,8 @@ from app.constants import (
 def test_successful_scoring_accepts_user(client, valid_payload):
     """Пользователь проходит скоринг и получает предложение."""
     response = client.post(PIONEER_SCORING_URL, json=valid_payload)
-    assert response.status_code == HTTPStatus.OK
 
+    assert response.status_code == HTTPStatus.OK
     data = response.json()
     assert data['decision'] == ACCEPTED_STR
     assert data['product'] is not None
@@ -31,8 +31,8 @@ def test_rejects_if_product_not_exists(client, invalid_product_payload):
 def test_immediate_rejection_due_to_age(client, underage_payload):
     """Немедленный отказ из-за возраста."""
     response = client.post(PIONEER_SCORING_URL, json=underage_payload)
-    assert response.status_code == HTTPStatus.OK
 
+    assert response.status_code == HTTPStatus.OK
     data = response.json()
     assert data['decision'] == REJECTED_STR
     assert data['product'] is None
@@ -41,8 +41,8 @@ def test_immediate_rejection_due_to_age(client, underage_payload):
 def test_immediate_rejection_due_to_low_income(client, low_income_payload):
     """Немедленный отказ из-за низкого дохода."""
     response = client.post(PIONEER_SCORING_URL, json=low_income_payload)
-    assert response.status_code == HTTPStatus.OK
 
+    assert response.status_code == HTTPStatus.OK
     data = response.json()
     assert data['decision'] == REJECTED_STR
     assert data['product'] is None

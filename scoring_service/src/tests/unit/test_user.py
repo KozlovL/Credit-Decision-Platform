@@ -1,12 +1,12 @@
 import pytest
 from common.constants import PHONE_JSON_FIELD_NAME
+from common.schemas.user import UserDataWrite
 from pydantic import ValidationError
 
 from app.constants import (
     AGE_FIELD_NAME, MONTHLY_INCOME_FIELD,
     EMPLOYMENT_TYPE_FIELD, HAS_PROPERTY_FIELD,
 )
-from app.schemas.scoring import ScoringUserDataWrite
 from tests.fixtures.user import (
     VALID_USERDATA_1, VALID_USERDATA_2,
     VALID_USERDATA_3, INVALID_HAS_PROPERTY_USERDATA, INVALID_AGE_USERDATA,
@@ -37,7 +37,7 @@ def test_valid_userdata(
         has_property
 ):
     """Тест валидных данных пользователя."""
-    user = ScoringUserDataWrite(
+    user = UserDataWrite(
         phone=phone,
         age=age,
         monthly_income=monthly_income,
@@ -76,7 +76,7 @@ def test_invalid_userdata(
 ):
     """Тест невалидных данных пользователя."""
     with pytest.raises(ValidationError):
-        user = ScoringUserDataWrite(
+        user = UserDataWrite(
             phone=phone,
             age=age,
             monthly_income=monthly_income,

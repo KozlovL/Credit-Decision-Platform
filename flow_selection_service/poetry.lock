@@ -80,7 +80,7 @@ optional = false
 python-versions = "^3.12"
 groups = ["main"]
 files = []
-develop = false
+develop = true
 
 [package.dependencies]
 fastapi = "^0.118.0"
@@ -604,4 +604,4 @@ standard = ["colorama (>=0.4) ; sys_platform == \"win32\"", "httptools (>=0.6.3)
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "86290da09e068c0e0c88a7124d8ab8c62fa0bf5e17fb5ffa13cd2bdf32d8a816"
+content-hash = "719adb63138d444e71071dd35c15fcfbbe7885453e50edbd55ecde9d3f35cb54"

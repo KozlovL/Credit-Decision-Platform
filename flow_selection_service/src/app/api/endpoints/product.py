@@ -1,5 +1,3 @@
-from common.repository.product import AVAILABLE_PRODUCT_LIST
-from common.repository.user import USERS_PHONES, add_user
 from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter
 
@@ -9,27 +7,36 @@ from app.constants import (
     PRODUCTS_TAG,
     REPEATER_FLOW_TYPE,
 )
-from app.schemas.product import FlowProductListRead
+from app.logic.user import is_repeater
+from app.repository.products import (
+    get_available_pioneer_products,
+    get_available_repeater_products,
+)
+from app.schemas.product import FlowProductRead
 
 router = APIRouter(prefix=PRODUCT_PREFIX, tags=[PRODUCTS_TAG])
 
 
 @router.post(
     '',
-    response_model=FlowProductListRead,
+    response_model=FlowProductRead,
     summary='Выбор флоу по номеру телефона',
 )
 def select_flow(
         user: UserPhoneWrite,
-) -> FlowProductListRead:
-    if user.phone in USERS_PHONES:
-        return FlowProductListRead(
-            flow_type=REPEATER_FLOW_TYPE,
-            available_products=[],
-        )
-    # Записываем нового пользователя в "БД"
-    add_user(user.phone)
-    return FlowProductListRead(
-        flow_type=PIONEER_FLOW_TYPE,
-        available_products=AVAILABLE_PRODUCT_LIST,
+) -> FlowProductRead:
+
+    # Если пользователь повторник...
+    if is_repeater(phone=user.phone):
+        # выводим данные для повторника, ...
+        flow_type = REPEATER_FLOW_TYPE
+        available_products = get_available_repeater_products()
+    else:
+        # иначе выводим данные для первичника
+        flow_type = PIONEER_FLOW_TYPE
+        available_products = get_available_pioneer_products()
+
+    return FlowProductRead(
+        flow_type=flow_type,
+        available_products=available_products,
     )
