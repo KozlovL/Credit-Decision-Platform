@@ -26,7 +26,9 @@ from app.repository.product import (
     get_available_repeater_products_with_score,
 )
 from app.schemas.scoring import (
-    ScoringRead, ScoringWritePioneer, ScoringWriteRepeater,
+    ScoringRead,
+    ScoringWritePioneer,
+    ScoringWriteRepeater,
 )
 
 router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
