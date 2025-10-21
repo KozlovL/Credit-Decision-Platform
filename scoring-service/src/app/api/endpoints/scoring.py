@@ -1,4 +1,6 @@
-from common.repository.user import add_user, update_user
+from common.constants import EmploymentType
+from common.repository.user import add_user
+from common.schemas.user import UserDataPhoneWrite
 from fastapi import APIRouter
 
 from app.api.validators import check_products_are_exists
@@ -24,8 +26,7 @@ from app.repository.product import (
     get_available_repeater_products_with_score,
 )
 from app.schemas.scoring import (
-    ScoringRead,
-    ScoringWrite,
+    ScoringRead, ScoringWritePioneer, ScoringWriteRepeater,
 )
 
 router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
@@ -37,7 +38,7 @@ router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
     summary='Процесс скоринга для первичника',
 )
 def scoring_pioneer(
-        data: ScoringWrite,
+        data: ScoringWritePioneer,
 ) -> ScoringRead:
 
     # Проверяем является ли пользователь первичником
@@ -81,14 +82,14 @@ def scoring_pioneer(
     summary='Процесс скоринга для повторника',
 )
 def scoring_repeater(
-        data: ScoringWrite,
+        data: ScoringWriteRepeater,
 ) -> ScoringRead:
 
-    user_data = data.user_data
+    phone = data.phone
     products = data.products
 
     # Пытаемся получить пользователя из БД
-    user = get_user_or_404_by_phone(phone=user_data.phone)
+    user = get_user_or_404_by_phone(phone=phone)
 
     # Проверяем существуют ли переданные продукты
     check_products_are_exists(
@@ -96,17 +97,21 @@ def scoring_repeater(
         available_products=get_available_repeater_product_names()
     )
 
-    credit_history = user.credit_history
-
     # Создаем класс скоринга повторника
     repeater_scoring = ScoringRepeater(
-        user_data=data.user_data,
+        user_data=UserDataPhoneWrite(
+            phone=user.phone,
+            age=user.age,
+            monthly_income=user.monthly_income,
+            employment_type=EmploymentType(user.employment_type),
+            has_property=user.has_property,
+        ),
         products=products,
         min_score_for_acceptance=MIN_REPEATER_SCORE_FOR_PRODUCT,
         available_products_with_score=(
             get_available_repeater_products_with_score()
         ),
-        credit_history=credit_history,
+        credit_history=user.credit_history,
     )
 
     # Проводим скоринг
@@ -115,8 +120,6 @@ def scoring_repeater(
     # Если есть подходящий продукт, то решение положительное и добавляем
     # запись в кредитную историю пользователя
     if available_product is not None:
-        # Обновляем данные о пользователе
-        update_user(user=user, new_user_data=user_data)
         # Добавляем запись в кредитную историю пользователя
         user.add_credit_note(
             product_data=available_product

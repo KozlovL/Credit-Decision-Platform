@@ -1,7 +1,7 @@
 import pytest
 from common.constants import EmploymentType
 from common.repository.user import add_user, USERS
-from common.schemas.user import UserDataWrite
+from common.schemas.user import UserDataPhoneWrite
 from starlette.testclient import TestClient
 
 from app.constants import MICROLOAN_STR, QUICK_MONEY_STR, CONSUMER_LOAN_STR
@@ -71,7 +71,7 @@ def invalid_product():
 @pytest.fixture
 def existing_user(valid_user_data):
     """Добавляем пользователя в БД (эмуляция существующего)."""
-    add_user(UserDataWrite(**valid_user_data))
+    add_user(UserDataPhoneWrite(**valid_user_data))
     return valid_user_data
 
 
