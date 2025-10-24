@@ -1,7 +1,11 @@
 import logging
 
 from common.constants import EmploymentType
-from common.schemas.user import UserDataPhoneWrite, CreditHistoryRead
+from common.schemas.user import (
+    CreditHistoryRead,
+    ProfileWrite,
+    UserDataPhoneWrite,
+)
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
@@ -17,12 +21,14 @@ from app.constants import (
     MIN_PIONEER_SCORE_FOR_PRODUCT,
     MIN_REPEATER_SCORE_FOR_PRODUCT,
     PIONEER_PREFIX,
+    PIONEER_SCORING_URL,
     REPEATER_PREFIX,
     SCORING_PREFIX,
-    SCORING_TAG, PIONEER_SCORING_URL,
+    SCORING_TAG,
 )
 from app.logic.scoring_process import (
-    ScoringPioneer, ScoringRepeater,
+    ScoringPioneer,
+    ScoringRepeater,
 )
 from app.repository.product import (
     get_available_pioneer_product_names,
@@ -30,7 +36,7 @@ from app.repository.product import (
     get_available_repeater_product_names,
     get_available_repeater_products_with_score,
 )
-from app.repository.user import put_profile_and_loan, put_loan
+from app.repository.user import put_loan, put_profile_and_loan
 from app.schemas.scoring import (
     ScoringRead,
     ScoringWritePioneer,
@@ -85,7 +91,7 @@ def scoring_pioneer(
         try:
             put_profile_and_loan(
                 phone=phone,
-                user_data=profile,
+                user_data=ProfileWrite(**profile),
                 available_product=available_product,
                 client=client,
             )

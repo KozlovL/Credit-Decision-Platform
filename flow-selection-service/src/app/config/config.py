@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import yaml
 from pydantic import BaseModel, Field, ValidationError
 
@@ -25,7 +26,9 @@ class Config(BaseModel):
                 Path(file_path).read_text(encoding='utf8')
             )
             return cls(**config_raw)
-        except FileNotFoundError:
-            raise FileNotFoundError(f'Файл конфигурации не найден: {file_path}')
+        except FileNotFoundError as error:
+            raise FileNotFoundError(
+                f'Файл конфигурации не найден: {file_path}'
+            ) from error
         except ValidationError as error:
-            raise ValueError(f'Неверная структура данных: {error}')
+            raise ValueError(f'Неверная структура данных: {error}') from error

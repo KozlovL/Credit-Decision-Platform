@@ -10,7 +10,7 @@ def check_if_pioneer(phone: str, client: DataServiceClient) -> None:
     try:
         client.get_user_data(phone=phone)
     except HTTPException:
-        return None
+        return
 
     raise HTTPException(
         status_code=HTTPStatus.BAD_REQUEST,

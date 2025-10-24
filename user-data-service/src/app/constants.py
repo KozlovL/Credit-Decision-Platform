@@ -1,4 +1,3 @@
-import re
 
 from common.constants import API_PREFIX
 

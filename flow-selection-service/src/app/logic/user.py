@@ -1,4 +1,3 @@
-from common.repository.user import get_users
 from fastapi import HTTPException
 from starlette import status
 

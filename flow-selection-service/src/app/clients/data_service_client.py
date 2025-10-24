@@ -1,10 +1,11 @@
 import time
 from http import HTTPStatus
+from typing import Any
 
 import httpx
 from fastapi import HTTPException
 from httpx import Response
-from typing import Any
+
 from app.config.config import Config
 from app.constants import CONFIG_PATH
 
@@ -18,10 +19,9 @@ class DataServiceClient:
         self.max_attempts = config.data_service.retries.max_attempts
         self.delay = config.data_service.retries.delay
 
-    def _request(self, method: str, endpoint: str, **kwargs) -> Response:
+    def _request(self, method: str, endpoint: str, **kwargs: Any) -> Response:
         """Выполнение HTTP-запроса с поддержкой ретраев."""
         url = f'{self.base_url}/{endpoint.lstrip("/")}'
-        last_exc: Exception | None = None
 
         for attempt in range(1, self.max_attempts + 1):
             try:
@@ -39,7 +39,6 @@ class DataServiceClient:
                     ) from exc
 
             except httpx.RequestError as exc:
-                last_exc = exc
                 if attempt < self.max_attempts:
                     time.sleep(self.delay)
                 else:
@@ -54,12 +53,12 @@ class DataServiceClient:
             detail='Неизвестная ошибка при запросе'
         )
 
-    def get_user_data(self, phone: str) -> dict[str, Any]:
+    def get_user_data(self, phone: str) -> Any:
         """Получение данных пользователя по номеру телефона."""
         response = self._request('GET', f'api/user-data?phone={phone}')
         return response.json()
 
-    def put_user_data(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def put_user_data(self, payload: dict[str, Any]) -> Any:
         """Создание или обновление данных пользователя."""
         response = self._request('PUT', 'api/user-data', json=payload)
         return response.json()

@@ -2,7 +2,9 @@ from datetime import UTC, date, datetime
 
 from common.constants import CreditStatus
 from common.schemas.user import (
-    ProfileWrite, UserPhoneWrite, CreditHistoryRead,
+    CreditHistoryRead,
+    ProfileWrite,
+    UserPhoneWrite,
     ValidateStatusAndCloseDateMixin,
 )
 from pydantic import (
