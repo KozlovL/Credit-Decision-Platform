@@ -1,11 +1,14 @@
+from datetime import date
+from typing import Any, Self
+
 from pydantic import (
     ConfigDict, field_validator, BaseModel, PositiveInt, Field,
-    StrictBool, ValidationError,
+    StrictBool, model_validator,
 )
 
 from common.constants import (
     PHONE_REGEX, PHONE_JSON_FIELD_NAME, EmploymentType,
-    AGE_MIN, AGE_MAX,
+    AGE_MIN, AGE_MAX, CreditStatus, LOAN_ID_REGEX,
 )
 
 
@@ -47,3 +50,53 @@ class UserDataPhoneWrite(UserPhoneWrite, ProfileWrite):
 
 class UserPhoneRead(UserDataPhoneWrite):
     """Схема номера телефона пользователя для чтения."""
+
+
+class ValidateStatusAndCloseDateMixin:
+    """Миксин с валидацией статуса и даты закрытия кредита."""
+    close_date: Any
+    status: Any
+
+    @model_validator(mode='after')
+    def validate_status_close_date(self) -> Self:
+        """Валидация поля close_date относительно статуса."""
+        if (
+            (
+                self.close_date is None
+                and self.status != CreditStatus.OPEN
+            )
+            or
+                (
+                    self.close_date is not None
+                    and self.status != CreditStatus.CLOSED
+                )
+        ):
+            raise ValueError(
+                'Поле close_date может быть пустым только при открытом '
+                'статусе кредита и наоборот.'
+            )
+        return self
+
+
+class CreditHistoryRead(
+    BaseModel,
+    ValidateStatusAndCloseDateMixin,
+):
+    """Схема кредитной истории для чтения."""
+
+    loan_id: str
+    product_name: str
+    amount: PositiveInt
+    issue_date: date
+    term_days: PositiveInt
+    status: CreditStatus
+    close_date: date | None
+
+    @field_validator('loan_id')
+    def validate_phone(cls, value: str) -> str | None:
+        if not LOAN_ID_REGEX.match(value):
+            raise ValueError(
+                'Неверный формат loan_id. '
+                'Верный формат выглядит так - loan_{phone}_{timestamp}'
+            )
+        return value

@@ -13,4 +13,3 @@ AVAILABLE_PRODUCTS = (
     'AdvantagePlus',
     'PrimeCredit'
 )
-LOAN_ID_REGEX = re.compile(r'^loan_\d{4}-\d{2}-\d{2}_\d+$')

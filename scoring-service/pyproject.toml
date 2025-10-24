@@ -10,6 +10,8 @@ python = "^3.12"
 fastapi = "^0.118.0"
 uvicorn = "^0.37.0"
 common = {path = "../common", develop = true}
+pyyaml = "^6.0.3"
+respx = "^0.22.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.2"

@@ -1,3 +1,4 @@
+import os
 from enum import IntEnum
 
 from common.constants import API_PREFIX
@@ -25,6 +26,11 @@ CONSUMER_LOAN_STR = 'ConsumerLoan'
 LOYALTY_LOAN_STR = 'LoyaltyLoan'
 ADVANTAGE_PLUS_STR = 'AdvantagePlus'
 PRIME_CREDIT_STR = 'PrimeCredit'
+CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__),
+    '../config/config.yaml'
+)
+DATA_SERVICE_BASE_URL = 'http://localhost:8001'
 
 
 class AgeType(IntEnum):

@@ -1,4 +1,4 @@
-from datetime import date, timedelta, datetime, UTC
+from datetime import date, timedelta
 
 from common.constants import (
     CreditStatus, EXISTING_USER_DATA, EXISTING_USER_PRODUCT_DATA,
@@ -13,18 +13,11 @@ from common.schemas.user import (
 class CreditHistory:
     """Класс кредитной истории."""
 
-    # ID записей в кредитной истории
-    next_loan_id: int = 1
-
     def __init__(
             self,
             product_data: ProductWrite
     ) -> None:
-        self.loan_id: str = (
-            f'loan_{datetime.now(UTC).date()}_'
-            f'{CreditHistory.next_loan_id}'
-        )
-        CreditHistory.next_loan_id += 1
+        self.loan_id: str = ''
         self.product_name = product_data.name
         self.amount = product_data.max_amount
         self.issue_date = date.today()
