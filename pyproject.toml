@@ -48,7 +48,8 @@ ignore = [
     "S104",   # possible binding to all interfaces (for development server)
     "N805",   # ignore: first argument of classmethod named `cls`
     "RUF003",
-    "RUF002"
+    "RUF002",
+    "RUF001"
 ]
 
 [tool.ruff.lint.isort]

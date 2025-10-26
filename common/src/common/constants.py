@@ -1,6 +1,5 @@
 # Строка из 11 цифр начинающая на 7
 import re
-from datetime import date
 from enum import Enum
 
 PHONE_REGEX = re.compile(r'^7\d{10}$')
@@ -15,7 +14,7 @@ PHONE_JSON_FIELD_NAME = 'phone'
 NULL_PHONE_NUMBER = None
 EMPTY_PHONE_NUMBER = ''
 AGE_MIN = 0
-AGE_MAX = 150
+AGE_MAX = 120
 
 
 class EmploymentType(str, Enum):

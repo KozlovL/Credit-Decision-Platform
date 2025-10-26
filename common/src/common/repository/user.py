@@ -1,19 +1,30 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime, UTC
 
 from common.constants import (
     CreditStatus, EXISTING_USER_DATA, EXISTING_USER_PRODUCT_DATA,
+    EmploymentType,
 )
 from common.schemas.product import ProductWrite
-from common.schemas.user import UserDataWrite
+from common.schemas.user import (
+    UserDataPhoneWrite, ProfileWrite,
+)
 
 
 class CreditHistory:
     """Класс кредитной истории."""
 
+    # ID записей в кредитной истории
+    next_loan_id: int = 1
+
     def __init__(
             self,
             product_data: ProductWrite
     ) -> None:
+        self.loan_id: str = (
+            f'loan_{datetime.now(UTC).date()}_'
+            f'{CreditHistory.next_loan_id}'
+        )
+        CreditHistory.next_loan_id += 1
         self.product_name = product_data.name
         self.amount = product_data.max_amount
         self.issue_date = date.today()
@@ -27,7 +38,7 @@ class User:
 
     def __init__(
             self,
-            user_data: UserDataWrite,
+            user_data: UserDataPhoneWrite,
     ) -> None:
         self.phone: str = user_data.phone
         self.age: int = user_data.age
@@ -44,12 +55,25 @@ class User:
         )
         self.credit_history.append(credit_note)
 
+    def add_existing_credit_note(self, credit_note: CreditHistory) -> None:
+        """Метод добавления существующей записи в кредитную историю."""
+        self.credit_history.append(credit_note)
+
+    def get_profile(self):
+        """Метод получения профиля пользователя."""
+        return ProfileWrite(
+            age=self.age,
+            monthly_income=self.monthly_income,
+            employment_type=EmploymentType(self.employment_type),
+            has_property=self.has_property,
+        )
+
 
 # "БД" пользователей
 USERS: list[User] = []
 
 
-def add_user(user_data: UserDataWrite) -> User:
+def add_user(user_data: UserDataPhoneWrite) -> User:
     """Функция добавления пользователя в базу данных."""
     user = User(user_data=user_data)
     USERS.append(user)
@@ -69,9 +93,8 @@ def get_user_by_phone(phone: str) -> User | None:
     return None
 
 
-def update_user(user: User, new_user_data: UserDataWrite) -> User:
+def update_user(user: User, new_user_data: UserDataPhoneWrite) -> User:
     """Функция обновления данных о пользователе."""
-    user.phone = new_user_data.phone
     user.age = new_user_data.age
     user.monthly_income = new_user_data.monthly_income
     user.employment_type = new_user_data.employment_type
@@ -81,7 +104,7 @@ def update_user(user: User, new_user_data: UserDataWrite) -> User:
 
 # Создадим первого пользователя
 first_user: User = User(
-        user_data=UserDataWrite(**EXISTING_USER_DATA)
+        user_data=UserDataPhoneWrite(**EXISTING_USER_DATA)
     )
 # Добавим первому пользователю кредитную историю
 first_user.credit_history = [CreditHistory(
