@@ -10,8 +10,12 @@ python = "^3.12"
 fastapi = "^0.118.0"
 uvicorn = "^0.37.0"
 common = {path = "../common", develop = true}
+aiokafka = "^0.12.0"
+pydantic-settings = "^2.11.0"
+pyyaml = "^6.0.3"
 
 [tool.poetry.group.dev.dependencies]
+types-PyYAML = "^6.0.12.20240808"
 pytest = "^8.4.2"
 httpx = "^0.28.1"
 ruff = "^0.13.3"

@@ -1,0 +1,5 @@
+kafka:
+  bootstrap_servers: "localhost:9092"
+  topic: "scoring_results"
+  session_timeout_ms: 10000
+  retry_timeout_ms: 2000

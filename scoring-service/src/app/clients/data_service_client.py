@@ -14,6 +14,7 @@ class DataServiceClient:
     """HTTP-клиент для взаимодействия с data-service."""
 
     def __init__(self, config: Config):
+        # Теперь берем настройки из config.data_service
         self.base_url = config.data_service.base_url.rstrip('/')
         self.timeout = config.data_service.timeout
         self.max_attempts = config.data_service.retries.max_attempts
@@ -36,7 +37,7 @@ class DataServiceClient:
                 detail = exc.response.text
                 raise HTTPException(
                     status_code=status_code, detail=detail
-                    ) from exc
+                ) from exc
 
             except httpx.RequestError as exc:
                 if attempt < self.max_attempts:

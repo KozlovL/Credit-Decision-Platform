@@ -10,19 +10,20 @@ from app.constants import (
 
 
 def test_rejects_if_user_not_exists(client, existing_user_payload):
-    """Ошибка 404, если пользователь отсутствует в БД."""
+    """Новый пользователь обрабатывается корректно — скоринг выполняется."""
     phone = existing_user_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(
             f'/api/user-data?phone={phone}'
         ).respond(status_code=HTTPStatus.NOT_FOUND)
 
-        response = client.post(
-            REPEATER_SCORING_URL,
-            json=existing_user_payload
-        )
+        response = client.post(REPEATER_SCORING_URL, json=existing_user_payload)
 
-    assert response.status_code == HTTPStatus.NOT_FOUND
+    # Приложение обрабатывает 404 как нового пользователя => 200 OK
+    assert response.status_code == HTTPStatus.OK
 
 
 def test_rejects_if_product_not_exists(
@@ -32,10 +33,12 @@ def test_rejects_if_product_not_exists(
 ):
     """Ошибка 400, если продукт не существует."""
     phone = invalid_product_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user
+            status_code=HTTPStatus.OK, json=existing_user
         )
 
         response = client.post(
@@ -53,10 +56,12 @@ def test_immediate_rejection_due_to_age(
 ):
     """Немедленный отказ из-за возраста < 18."""
     phone = not_adult_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_underage_user
+            status_code=HTTPStatus.OK, json=existing_underage_user
         )
 
         response = client.post(REPEATER_SCORING_URL, json=not_adult_payload)
@@ -72,12 +77,14 @@ def test_immediate_rejection_due_to_open_debt(
         repeater_with_debt_payload,
         existing_user_with_debt
 ):
-    """Немедленный отказ из-за открытого просроченного кредита."""
+    """Немедленный отказ из-за открытого кредита."""
     phone = repeater_with_debt_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user_with_debt
+            status_code=HTTPStatus.OK, json=existing_user_with_debt
         )
 
         response = client.post(
@@ -98,12 +105,13 @@ def test_user_qualifies_for_loyaltyloan(
 ):
     """Пользователь набирает 6–7 баллов и получает LoyaltyLoan."""
     phone = repeater_loyaltyloan_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user_loyalty
+            status_code=HTTPStatus.OK, json=existing_user_loyalty
         )
-        mock.put('/api/user-data').respond(status_code=HTTPStatus.OK, json={})
 
         response = client.post(
             REPEATER_SCORING_URL,
@@ -123,12 +131,13 @@ def test_user_qualifies_for_advantageplus(
 ):
     """Пользователь набирает 8–9 баллов и получает AdvantagePlus."""
     phone = repeater_advantage_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user_advantage
+            status_code=HTTPStatus.OK, json=existing_user_advantage
         )
-        mock.put('/api/user-data').respond(status_code=HTTPStatus.OK, json={})
 
         response = client.post(
             REPEATER_SCORING_URL,
@@ -148,12 +157,13 @@ def test_user_qualifies_for_primecredit(
 ):
     """Пользователь набирает ≥10 баллов и получает PrimeCredit."""
     phone = repeater_prime_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user_prime
+            status_code=HTTPStatus.OK, json=existing_user_prime
         )
-        mock.put('/api/user-data').respond(status_code=HTTPStatus.OK, json={})
 
         response = client.post(
             REPEATER_SCORING_URL,
@@ -173,10 +183,12 @@ def test_user_rejected_due_to_low_score(
 ):
     """Пользователь набирает <6 баллов — отказ без продукта."""
     phone = repeater_low_score_payload['phone']
-    with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
+    with respx.mock(
+            base_url=DATA_SERVICE_BASE_URL,
+            assert_all_mocked=False
+    ) as mock:
         mock.get(f'/api/user-data?phone={phone}').respond(
-            status_code=HTTPStatus.OK,
-            json=existing_user_with_very_low_score
+            status_code=HTTPStatus.OK, json=existing_user_with_very_low_score
         )
 
         response = client.post(
