@@ -34,7 +34,7 @@ class CreditNote(Base):
     loan_id: Mapped[str] = mapped_column(String, nullable=False)
     product_name: Mapped[str] = mapped_column(String, nullable=False)
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    issue_date: Mapped[date] = mapped_column(Date, default=date.today)
+    issue_date: Mapped[date] = mapped_column(Date, nullable=False)
     term_days: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[CreditStatus] = mapped_column(
         Enum(CreditStatus),
