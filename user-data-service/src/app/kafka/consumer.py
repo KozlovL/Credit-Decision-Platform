@@ -14,7 +14,7 @@ from common.repository.user import (
 )
 from common.schemas.user import UserDataPhoneWrite
 
-from app.config.config import KafkaConfig
+from app.core.config import KafkaConfig
 from app.repository.user_data import (
     create_existing_credit_note,
     get_credit_history,

@@ -4,6 +4,8 @@ import yaml
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
+from app.constants import CONFIG_PATH
+
 
 class KafkaConfig(BaseModel):
     """Конфиг Kafka."""
@@ -16,11 +18,15 @@ class KafkaConfig(BaseModel):
 class Config(BaseSettings):
     """Конфиг приложения, берущий все значения из YAML."""
 
-    kafka: KafkaConfig
+    database_url: str = (
+        'postgresql+asyncpg://test_user'
+        ':test_password@127.0.0.1:5432/test_db'
+    )
+    kafka: KafkaConfig | None = None
 
     @classmethod
-    def from_yaml(cls, path: str | Path) -> 'Config':
-        """Загружает конфиг из YAML-файла."""
+    def load_kafka_from_yaml(cls, path: str | Path) -> KafkaConfig:
+        """Загружает только Kafka-конфиг из YAML."""
         path = Path(path)
         if not path.exists():
             raise FileNotFoundError(f'Файл не найден: {path}')
@@ -30,15 +36,22 @@ class Config(BaseSettings):
 
         kafka_cfg = data.get('kafka', {})
 
-        # Разбираем bootstrap_servers на host:port
         bootstrap = kafka_cfg.get('bootstrap_servers', 'localhost:9092')
         host, port = bootstrap.split(':')
 
-        kafka = KafkaConfig(
+        return KafkaConfig(
             url=f'{host}:{port}',
             session_timeout_ms=kafka_cfg.get('session_timeout_ms', 10000),
             retry_timeout_ms=kafka_cfg.get('retry_timeout_ms', 2000),
             topic=kafka_cfg.get('topic', 'test_topic')
         )
 
-        return cls(kafka=kafka)
+    class Config:
+        env_file = '.env'
+
+
+# создаём объект Config с database_url из .env
+config = Config()
+
+# подгружаем Kafka из YAML отдельно
+config.kafka = Config.load_kafka_from_yaml(CONFIG_PATH)

@@ -6,8 +6,8 @@ from typing import Any, cast
 from fastapi import FastAPI
 
 from app.api.routers import main_router
-from app.config.config import Config
 from app.constants import CONFIG_PATH
+from app.core.config import config
 from app.kafka.consumer import KafkaConsumer
 
 
@@ -15,9 +15,6 @@ from app.kafka.consumer import KafkaConsumer
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """Запускает и останавливает приложение с Kafka consumer."""
     logging.info('Starting up user-data-service...')
-
-    # Загружаем конфиг
-    config = Config.from_yaml(CONFIG_PATH)
 
     # Инициализация KafkaConsumer
     kafka_config = config.kafka
