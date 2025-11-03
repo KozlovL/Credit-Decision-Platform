@@ -3,8 +3,10 @@ import json
 import logging
 from typing import Any
 
-from aiokafka import AIOKafkaConsumer  # type: ignore[import-untyped]
-from aiokafka import ConsumerRecord
+from aiokafka import (
+    AIOKafkaConsumer,  # type: ignore[import-untyped]
+    ConsumerRecord,
+)
 from aiokafka.errors import KafkaError  # type: ignore[import-untyped]
 from common.schemas.user import ProfileWrite
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -94,7 +96,11 @@ class KafkaConsumer:
             logger.exception(f'Ошибка обработки сообщения для {phone}: {exc}')
             # Не коммитим оффсет, чтобы попытаться повторно
 
-    async def _handle_pioneer(self, session: AsyncSession, data: dict[str, Any]) -> None:
+    async def _handle_pioneer(
+            self,
+            session: AsyncSession,
+            data: dict[str, Any]
+        ) -> None:
         """Обработка события pioneer_accepted."""
         phone = data['phone']
         profile_data = data['profile']
@@ -124,7 +130,12 @@ class KafkaConsumer:
         )
         logger.info(f'Обработано pioneer_accepted для {phone}')
 
-    async def _handle_repeater(self, session: AsyncSession, data: dict[str, Any]) -> None:
+    async def _handle_repeater(
+            self,
+            session:
+            AsyncSession,
+            data: dict[str, Any]
+        ) -> None:
         """Обработка события repeater_accepted."""
         phone = data['phone']
         loan_entry_data = data['loan_entry']
