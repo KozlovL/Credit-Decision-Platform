@@ -9,6 +9,7 @@ from app.core.db import Base
 
 class User(Base):  # type: ignore[misc]
     """Модель пользователя."""
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     phone: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)

@@ -1,40 +1,52 @@
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
+import pytest_asyncio
 from common.constants import EmploymentType
-from httpx import AsyncClient
+from fastapi import FastAPI, HTTPException
+from httpx import ASGITransport, AsyncClient
 
-from app.constants import (
-    MICROLOAN_STR, QUICK_MONEY_STR, CONSUMER_LOAN_STR,
-)
-from app.service import app
+from app.api.routers import main_router
+from app.clients.data_service_client import DataServiceClient, get_data_service_client
+from app.constants import CONSUMER_LOAN_STR, MICROLOAN_STR, QUICK_MONEY_STR
 
 
 @pytest.fixture
-async def client():
-    """Асинхронный тестовый клиент FastAPI."""
-    async with AsyncClient(
-            app=app,  # type: ignore[call-arg]
-            base_url='http://test'
-    ) as ac:
+def mock_data_service_client():
+    """Мок DataServiceClient для тестов."""
+    client = Mock(spec=DataServiceClient)
+    
+    # Метод get_user_data всегда выбрасывает 404 → пользователь считается первичником
+    client.get_user_data.side_effect = HTTPException(status_code=404, detail='not found')
+    
+    return client
+
+
+@pytest_asyncio.fixture
+async def app_with_mocked_kafka(mock_data_service_client):
+    app = FastAPI()
+    app.include_router(main_router)
+
+    # Заменяем Depends внутри эндпоинта
+    app.dependency_overrides[get_data_service_client] = lambda: mock_data_service_client
+
+    # Мокаем продюсер
+    mock_producer = AsyncMock()
+    app.state.producer = mock_producer
+
+    yield app
+
+
+@pytest_asyncio.fixture
+async def client(app_with_mocked_kafka):
+    transport = ASGITransport(app=app_with_mocked_kafka)
+    async with AsyncClient(transport=transport, base_url='http://test') as ac:
         yield ac
-
-
-@pytest.fixture(autouse=True)
-def clear_db():
-    """Очищает in-memory БД пользователей перед тестом."""
-    from common.repository.user import USERS
-    USERS.clear()
-
-
-@pytest.fixture(autouse=True)
-def mock_kafka_producer():
-    """Мокаем Kafka producer в app.state."""
-    app.state.producer = AsyncMock()
 
 
 @pytest.fixture
 def valid_user_data():
+    """Корректные данные пользователя."""
     return {
         'phone': '71111111111',
         'age': 30,
@@ -46,50 +58,61 @@ def valid_user_data():
 
 @pytest.fixture
 def valid_products():
+    """Список продуктов из "БД" (валидный, с полными данными)."""
     return [
         {
             'name': MICROLOAN_STR,
             'max_amount': 3_000_000,
             'term_days': 30,
-            'interest_rate_daily': 2.0
+            'interest_rate_daily': 2.0,
         },
         {
             'name': QUICK_MONEY_STR,
             'max_amount': 1_500_000,
             'term_days': 15,
-            'interest_rate_daily': 2.5
+            'interest_rate_daily': 2.5,
         },
         {
             'name': CONSUMER_LOAN_STR,
             'max_amount': 50_000_000,
             'term_days': 90,
-            'interest_rate_daily': 1.5
-        },
+            'interest_rate_daily': 1.5,
+        }
     ]
 
 
 @pytest.fixture
 def invalid_product():
+    """Несуществующий продукт."""
     return {
         'name': 'InvalidLoan',
         'max_amount': 999,
         'term_days': 10,
-        'interest_rate_daily': 10.0
+        'interest_rate_daily': 10.0,
     }
 
 
 @pytest.fixture
 def valid_payload(valid_user_data, valid_products):
-    return {'user_data': valid_user_data, 'products': valid_products}
+    """Полный валидный payload для успешного запроса."""
+    return {
+        'user_data': valid_user_data,
+        'products': valid_products,
+    }
 
 
 @pytest.fixture
 def invalid_product_payload(valid_user_data, invalid_product):
-    return {'user_data': valid_user_data, 'products': [invalid_product]}
+    """Payload с несуществующим продуктом."""
+    return {
+        'user_data': valid_user_data,
+        'products': [invalid_product],
+    }
 
 
 @pytest.fixture
 def underage_payload(valid_payload):
+    """Payload с пользователем младше ADULT_AGE."""
     payload = valid_payload.copy()
     payload['user_data'] = payload['user_data'].copy()
     payload['user_data']['age'] = 10
@@ -98,6 +121,7 @@ def underage_payload(valid_payload):
 
 @pytest.fixture
 def low_income_payload(valid_payload):
+    """Payload с пользователем с низким доходом."""
     payload = valid_payload.copy()
     payload['user_data'] = payload['user_data'].copy()
     payload['user_data']['monthly_income'] = 10_000
@@ -106,69 +130,74 @@ def low_income_payload(valid_payload):
 
 @pytest.fixture
 def microloan_payload(valid_products):
+    """Payload для пользователя, который должен получить MicroLoan."""
     return {
         'user_data': {
             'phone': '79999990001',
             'age': 25,
             'monthly_income': 3_000_000,
             'employment_type': EmploymentType.FULL_TIME,
-            'has_property': False,
+            'has_property': False
         },
-        'products': valid_products,
+        'products': valid_products
     }
 
 
 @pytest.fixture
 def quickmoney_payload(valid_products):
+    """Payload для пользователя, который должен получить QuickMoney."""
     return {
         'user_data': {
             'phone': '79999990002',
             'age': 25,
             'monthly_income': 4_000_000,
             'employment_type': EmploymentType.FULL_TIME,
-            'has_property': True,
+            'has_property': True
         },
-        'products': valid_products,
+        'products': valid_products
     }
 
 
 @pytest.fixture
 def consumerloan_payload(valid_products):
+    """Payload для пользователя, который должен получить ConsumerLoan."""
     return {
         'user_data': {
             'phone': '79999990003',
             'age': 45,
             'monthly_income': 8_000_000,
             'employment_type': EmploymentType.FULL_TIME,
-            'has_property': True,
+            'has_property': True
         },
-        'products': valid_products,
+        'products': valid_products
     }
 
 
 @pytest.fixture
 def unemployed_payload(valid_products):
+    """Payload для пользователя с безработным статусом."""
     return {
         'user_data': {
             'phone': '79999990004',
             'age': 30,
             'monthly_income': 2_000_000,
             'employment_type': EmploymentType.UNEMPLOYED,
-            'has_property': False,
+            'has_property': False
         },
-        'products': valid_products,
+        'products': valid_products
     }
 
 
 @pytest.fixture
 def low_score_payload(valid_products):
+    """Payload для пользователя с низкой суммой баллов (<5)."""
     return {
         'user_data': {
             'phone': '79999990005',
             'age': 19,
             'monthly_income': 1_500_000,
             'employment_type': EmploymentType.FREELANCE,
-            'has_property': False,
+            'has_property': False
         },
-        'products': valid_products,
+        'products': valid_products
     }

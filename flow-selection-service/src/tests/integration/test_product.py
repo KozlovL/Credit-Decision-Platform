@@ -7,7 +7,6 @@ from common.constants import (
     INCORRECT_LENGTH_PHONE, INCORRECT_FIRST_SYMBOL_PHONE,
     INCORRECT_SYMBOL_PHONE, EMPTY_PHONE_NUMBER,
 )
-from common.repository.user import USERS
 
 from app.constants import (
     PIONEER_FLOW_TYPE, REPEATER_FLOW_TYPE,

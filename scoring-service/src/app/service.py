@@ -35,9 +35,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 def create_application() -> FastAPI:
     """Создаёт FastAPI-приложение с lifespan и роутерами."""
     application = FastAPI(
-        lifespan=lifespan,
-        openapi_url='/kafka_producer/openapi.json',
-        docs_url='/kafka_producer/docs',
+        lifespan=lifespan
     )
     application.include_router(main_router)
     return application

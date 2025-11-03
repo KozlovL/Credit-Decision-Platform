@@ -1,18 +1,20 @@
 from datetime import date
 from http import HTTPStatus
 
-from common.repository.user import User, get_user_by_phone
 from common.schemas.user import UserPhoneWrite
 from fastapi import HTTPException
 from pydantic import ValidationError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.constants import AVAILABLE_PRODUCTS
+from app.models import User
+from app.repository.user_data import user_data_crud
 from app.schemas.user_data import LoanCreate, LoanUpdate
 
 
-def get_user_or_404_by_phone(phone: str) -> User:
+async def get_user_or_404_by_phone(phone: str, session: AsyncSession) -> User:
     """Функция, возвращающая пользователя по номеру телефона или ошибку 404."""
-    user = get_user_by_phone(phone=phone)
+    user = await user_data_crud.get_user_data(session=session, phone=phone)
     if user is None:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
