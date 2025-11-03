@@ -2,7 +2,6 @@ import asyncio
 import os
 import sys
 from logging.config import fileConfig
-from os import environ
 
 from alembic import context
 from dotenv import load_dotenv
