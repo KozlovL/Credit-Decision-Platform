@@ -69,9 +69,9 @@ test_job:
   services:
     - name: postgres:17-alpine
       alias: postgres-test
-      variables:
-        POSTGRES_USER: $POSTGRES_TEST_USER
+      environment:
         POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
+        POSTGRES_USER: $POSTGRES_TEST_USER
         POSTGRES_DB: $POSTGRES_TEST_DB
   script:
     - poetry run pytest -v --tb=short
