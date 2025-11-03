@@ -78,7 +78,16 @@ export PYTHONPATH="$(pwd)/{service-name}/src"
 
 Где `{service-name}` — это `user-data-service`, `flow-selection-service` или `scoring-service`.
 
-### 4. Запуск сервисов
+
+### 4. Создание .env файла
+
+```bash
+cp user-data-service/.env.example user-data-service/.env
+cp .env.example .env
+```
+
+
+### 5. Запуск сервисов
 
 В отдельных терминалах для каждого сервиса:
 

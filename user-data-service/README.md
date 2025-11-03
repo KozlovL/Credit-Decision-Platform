@@ -122,13 +122,19 @@ $Env:PYTHONPATH = "$(pwd)\user-data-service\src"
 export PYTHONPATH="$(pwd)/user-data-service/src"
 ```
 
-### 4. Выполнение миграций
+### 4. Создание .env файла
+
+```bash
+cp user-data-service/.env.example user-data-service/.env
+```
+
+### 5. Выполнение миграций
 
 ```bash
 poetry run --directory user-data-service alembic upgrade head
 ```
 
-### 5. Запуск сервиса
+### 6. Запуск сервиса
 
 ```bash
 poetry run --directory user-data-service uvicorn app.service:app --port 8001
@@ -137,7 +143,7 @@ poetry run --directory user-data-service uvicorn app.service:app --port 8001
 * Сервер доступен по адресу: `http://127.0.0.1:8001`
 * Документация доступна по адресу: `http://127.0.0.1:8001/docs`
 
-### 6. Запуск тестов
+### 7. Запуск тестов
 
 ```bash
 poetry run --directory user-data-service pytest -v
