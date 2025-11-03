@@ -16,12 +16,7 @@ AVAILABLE_PRODUCTS = (
     'AdvantagePlus',
     'PrimeCredit'
 )
-TEST_DATABASE_URL = (
-    f'postgresql+asyncpg://'
-    f'{os.getenv("POSTGRES_TEST_USER")}:{os.getenv("POSTGRES_TEST_PASSWORD")}'
-    f'@{os.getenv("POSTGRES_TEST_HOST")}:{os.getenv("POSTGRES_TEST_PORT")}/'
-    f'{os.getenv("POSTGRES_TEST_DB")}'
-)
+TEST_DATABASE_URL = os.getenv("DATABASE_URL")
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
     '../config.yaml'
