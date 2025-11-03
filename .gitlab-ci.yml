@@ -72,7 +72,7 @@ test_job:
     POSTGRES_TEST_PASSWORD: ${POSTGRES_TEST_PASSWORD}
     POSTGRES_TEST_DB: ${POSTGRES_TEST_DB}
     POSTGRES_TEST_HOST: postgres-test
-    POSTGRES_TEST_PORT: ${POSTGRES_TEST_PORT}
+    POSTGRES_TEST_PORT: 5432
 
   script:
     - poetry run pytest -v --tb=short
