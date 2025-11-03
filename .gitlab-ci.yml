@@ -67,7 +67,6 @@ test_job:
     - name: postgres:17-alpine
       alias: postgres-test
   script:
-    - until pg_isready -h postgres-test -U $POSTGRES_USER; do sleep 1; done
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
 
