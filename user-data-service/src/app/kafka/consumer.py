@@ -3,22 +3,15 @@ import json
 import logging
 from typing import Any
 
-from aiokafka import (  # type: ignore[import-untyped]
-    AIOKafkaConsumer,
-    ConsumerRecord,
-)
+from aiokafka import AIOKafkaConsumer  # type: ignore[import-untyped]
+from aiokafka import ConsumerRecord
 from aiokafka.errors import KafkaError  # type: ignore[import-untyped]
-from common.repository.user import (
-    add_user,
-    get_user_by_phone,
-)
-from common.schemas.user import UserDataPhoneWrite
+from common.schemas.user import ProfileWrite
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import KafkaConfig
-from app.repository.user_data import (
-    create_existing_credit_note,
-    get_credit_history,
-)
+from app.core.db import async_session
+from app.repository.user_data import user_data_crud
 from app.schemas.user_data import LoanCreate
 
 logger = logging.getLogger(__name__)
@@ -82,8 +75,7 @@ class KafkaConsumer:
         # Версионирование
         if data.get('version') != 1:
             logger.warning(
-                f'Пропущено сообщение с неизвестной версией:'
-                f' {data.get("version")}'
+                f'Пропущено сообщение с неизвестной версией: {data.get("version")}'
             )
             return
 
@@ -91,84 +83,72 @@ class KafkaConsumer:
         phone = data.get('phone')
 
         try:
-            if event_type == 'pioneer_accepted':
-                self._handle_pioneer(data)
-            elif event_type == 'repeater_accepted':
-                self._handle_repeater(data)
-            else:
-                logger.warning(f'Неизвестный тип события: {event_type}')
+            async with async_session() as session:
+                if event_type == 'pioneer_accepted':
+                    await self._handle_pioneer(session, data)
+                elif event_type == 'repeater_accepted':
+                    await self._handle_repeater(session, data)
+                else:
+                    logger.warning(f'Неизвестный тип события: {event_type}')
         except Exception as exc:
             logger.exception(f'Ошибка обработки сообщения для {phone}: {exc}')
             # Не коммитим оффсет, чтобы попытаться повторно
 
-    def _handle_pioneer(self, data: dict[str, Any]) -> None:
+    async def _handle_pioneer(self, session: AsyncSession, data: dict[str, Any]) -> None:
         """Обработка события pioneer_accepted."""
         phone = data['phone']
         profile_data = data['profile']
         loan_entry_data = data['loan_entry']
 
-        # Валидация через Pydantic
-        user_data = UserDataPhoneWrite(phone=phone, **profile_data)
+        user_profile = ProfileWrite(**profile_data)
         loan_entry = LoanCreate(**loan_entry_data)
 
-        # Пионер — новый пользователь, добавляем сразу
-        user = get_user_by_phone(phone)
+        # Проверяем существование пользователя
+        user = await user_data_crud.get_user_data(session=session, phone=phone)
         if user:
-            logger.warning(
-                f'Пионер {phone} уже существует в системе, '
-                f'возможно повторное сообщение'
-                )
+            logger.warning(f'Пионер {phone} уже существует')
         else:
-            user = add_user(user_data)
+            user = await user_data_crud.create_user_profile(
+                session=session,
+                phone=phone,
+                profile=user_profile,
+            )
             logger.info(f'Создан новый пользователь {phone} (пионер)')
 
-        # Кредитная история пока отсутствует
-        history = get_credit_history(user)
-
-        # Идемпотентность: если loan_id уже есть — игнорируем
-        if any(entry.loan_id == loan_entry.loan_id for entry in history):
-            logger.info(
-                f'Запись loan_id={loan_entry.loan_id} '
-                f'уже существует для {phone}'
-                )
-            return
 
         # Добавляем новую запись
-        credit_note = create_existing_credit_note(loan_entry)
-        user.add_existing_credit_note(credit_note)
+        await user_data_crud.create_credit_note(
+            session=session,
+            loan_data=loan_entry,
+            user=user,
+        )
         logger.info(f'Обработано pioneer_accepted для {phone}')
 
-    def _handle_repeater(self, data: dict[str, Any]) -> None:
+    async def _handle_repeater(self, session: AsyncSession, data: dict[str, Any]) -> None:
         """Обработка события repeater_accepted."""
         phone = data['phone']
         loan_entry_data = data['loan_entry']
 
-        # Валидация через Pydantic
         loan_entry = LoanCreate(**loan_entry_data)
 
-        # Получаем пользователя
-        user = get_user_by_phone(phone)
+        user = await user_data_crud.get_user_data(session=session, phone=phone)
         if not user:
             logger.warning(f'Пользователь {phone} не найден, пропускаем')
             return
-        logger.info(
-            f'Найден пользователь {phone} для обработки repeater_accepted'
-            )
-
-        # Получаем кредитную историю
-        history = get_credit_history(user)
 
         # Идемпотентность: если loan_id уже есть — игнорируем
-        if any(entry.loan_id == loan_entry.loan_id for entry in history):
+        if any(cn.loan_id == loan_entry.loan_id for cn in user.credit_notes):
             logger.info(
-                f'Запись loan_id={loan_entry.loan_id} '
-                f'уже существует для {phone}'
-                )
+                f'Запись loan_id={loan_entry.loan_id} уже существует для {phone}'
+            )
             return
 
         # Добавляем новую запись
-        credit_note = create_existing_credit_note(loan_entry)
-        user.add_existing_credit_note(credit_note)
+        await user_data_crud.create_credit_note(
+            session=session,
+            loan_data=loan_entry,
+            user=user,
+        )
         logger.info(f'Обработано repeater_accepted для {phone}')
 
     async def _commit_offset(self) -> None:

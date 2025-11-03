@@ -1,4 +1,4 @@
-from app.models.user_data import User, CreditNote
+from app.models.user_data import CreditNote, User
 
 __all__ = (
     'CreditNote',

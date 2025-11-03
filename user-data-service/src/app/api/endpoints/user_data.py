@@ -2,14 +2,10 @@ import json
 from http import HTTPStatus
 from typing import Annotated
 
-from common.constants import EmploymentType
-from common.repository.user import (
-    add_user,
-    get_user_by_phone,
-    update_user,
-)
-from common.schemas.user import ProfileWrite, UserDataPhoneWrite
-from fastapi import APIRouter, Body, HTTPException, Query
+from common.schemas.user import CreditHistoryRead, ProfileWrite
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
+from fastapi.encoders import jsonable_encoder
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.responses import JSONResponse
 
@@ -21,16 +17,9 @@ from app.api.validators import (
     validate_phone,
 )
 from app.constants import USER_DATA_PREFIX, USER_DATA_TAG
-from app.repository.user_data import (
-    create_existing_credit_note,
-    get_credit_history,
-    update_credit_note,
-)
-from app.schemas.user_data import (
-    LoanCreate,
-    LoanUpdate,
-    UserDataRead,
-)
+from app.core.db import get_session
+from app.repository.user_data import user_data_crud
+from app.schemas.user_data import LoanCreate, LoanUpdate, UserDataRead
 
 router = APIRouter(prefix=USER_DATA_PREFIX, tags=[USER_DATA_TAG])
 
@@ -40,25 +29,33 @@ router = APIRouter(prefix=USER_DATA_PREFIX, tags=[USER_DATA_TAG])
     response_model=UserDataRead,
     summary='Получение данных о пользователе по номеру телефона'
 )
-def get_user_data(
+async def get_user_data(
         phone: str = Query(...),
+        session: AsyncSession = Depends(get_session)
 ) -> UserDataRead:
     # Валидируем номер телефона
     validate_phone(phone=phone)
 
     # Ищем пользователя в БД
-    user = get_user_or_404_by_phone(phone=phone)
+    user = await get_user_or_404_by_phone(session=session, phone=phone)
+
+    user_data = jsonable_encoder(user)
+    user_data.pop('id')
+    credit_history = user_data.pop('credit_notes')
+    phone = user_data.pop('phone')
 
     # Собираем профиль
     profile = ProfileWrite(
-        age=user.age,
-        monthly_income=user.monthly_income,
-        employment_type=EmploymentType(user.employment_type),
-        has_property=user.has_property,
+        **user_data
     )
 
     # Собираем кредитную историю
-    history = get_credit_history(user=user)
+    history = [
+        CreditHistoryRead(
+            **credit_note
+        )
+        for credit_note in credit_history
+    ]
 
     return UserDataRead(phone=phone, profile=profile, history=history)
 
@@ -70,14 +67,14 @@ def get_user_data(
             'кредитной истории. Комбинированное обновление.'
     )
 )
-def update_user_data(
+async def update_user_data(
         phone: str = Body(...),
         profile: ProfileWrite | None = None,
         loan_entry: Annotated[LoanCreate | LoanUpdate, Body()] | None = None,
+        session: AsyncSession = Depends(get_session)
 ) -> JSONResponse:
     # Достаем телефон из схемы
     validate_phone(phone=phone)
-    user = None
 
     # Флаг для определения статус-кода в ответе
     created = None
@@ -85,25 +82,22 @@ def update_user_data(
     # Сценарий создания или обновления профиля
     if profile is not None:
         # Ищем пользователя в БД
-        user = get_user_by_phone(phone=phone)
+        user = await user_data_crud.get_user_data(session=session, phone=phone)
         # Если пользователь существует, то обновляем его данные
         if user is not None:
-            update_user(
+            user = await user_data_crud.update_user_profile(
+                session=session,
                 user=user,
-                new_user_data=UserDataPhoneWrite(
-                    phone=phone,
-                    **profile.model_dump()
-                ),
+                new_profile=profile,
             )
 
             created = False
         # Иначе создаем
         else:
-            user = add_user(
-                user_data=UserDataPhoneWrite(
-                    phone=phone,
-                    **profile.model_dump()
-                )
+            user = await user_data_crud.create_user_profile(
+                session=session,
+                phone=phone,
+                profile=profile,
             )
 
             created = True
@@ -111,10 +105,10 @@ def update_user_data(
     # Сценарии добавления и обновления записи в кредитной истории
     if loan_entry is not None:
         # Проверяем наличие пользователя в БД
-        user = get_user_or_404_by_phone(phone=phone)
+        user = await get_user_or_404_by_phone(session=session, phone=phone)
 
         # Ищем запись в кредитной истории
-        for credit_note in user.credit_history:
+        for credit_note in user.credit_notes:
             # Если нашли
             if loan_entry.loan_id == credit_note.loan_id:
                 # Валидируем данные
@@ -123,7 +117,8 @@ def update_user_data(
                 )
 
                 # Обновляем запись в кредитной истории
-                update_credit_note(
+                await user_data_crud.update_credit_note(
+                    session=session,
                     credit_note=credit_note,
                     loan_data=loan_data,
                 )
@@ -142,12 +137,10 @@ def update_user_data(
             )
 
             # Создаем запись
-            new_credit_note = create_existing_credit_note(
-                loan_entry=loan_data,  # type: ignore[arg-type]
-            )
-            # Добавляем запись в кредитную историю
-            user.add_existing_credit_note(
-                credit_note=new_credit_note
+            await user_data_crud.create_credit_note(
+                session=session,
+                loan_data=loan_data,  # type: ignore[arg-type]
+                user=user
             )
 
             created = False
@@ -158,11 +151,34 @@ def update_user_data(
             detail='Нужно ввести либо profile, либо loan_entry'
         )
 
+    user = await user_data_crud.get_user_data(
+        session=session,
+        phone=phone
+    )
+
+    user_data = jsonable_encoder(user)
+    user_data.pop('id')
+    credit_history = user_data.pop('credit_notes')
+    phone = user_data.pop('phone')
+
+    # Собираем профиль
+    profile = ProfileWrite(
+        **user_data
+    )
+
+    # Собираем кредитную историю
+    history = [
+        CreditHistoryRead(
+            **credit_note
+        )
+        for credit_note in credit_history
+    ]
+
     # Формируем ответ
     response_data = UserDataRead(
         phone=phone,
-        profile=user.get_profile(),  # type: ignore[union-attr]
-        history=get_credit_history(user=user)  # type: ignore[arg-type]
+        profile=profile,
+        history=history
     )
 
     return JSONResponse(

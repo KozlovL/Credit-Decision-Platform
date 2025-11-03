@@ -14,6 +14,7 @@ pyyaml = "^6.0.3"
 respx = "^0.22.0"
 aiokafka = "^0.12.0"
 pydantic-settings = "^2.11.0"
+pytest-asyncio = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 types-PyYAML = "^6.0.12.20240808"

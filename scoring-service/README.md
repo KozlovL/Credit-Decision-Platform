@@ -13,14 +13,14 @@
 **Описание:**  
 Процесс скоринга пользователя и подбор подходящего продукта для первичника.
 
-**Request body (JSON):**
 
+**Request body (JSON):**
 ```json
 {
   "user_data": {
     "phone": "79123456789",
     "age": 28,
-    "monthly_income": 45000,
+    "monthly_income": 4500000,
     "employment_type": "full_time",
     "has_property": true
   },
@@ -29,26 +29,25 @@
       "name": "MicroLoan",
       "max_amount": 3000000,
       "term_days": 30,
-      "interest_rate_daily": "2.0"
+      "interest_rate_daily": 2.0
     },
     {
       "name": "QuickMoney",
       "max_amount": 1500000,
       "term_days": 15,
-      "interest_rate_daily": "2.5"
+      "interest_rate_daily": 2.5
     },
     {
       "name": "ConsumerLoan",
       "max_amount": 50000000,
       "term_days": 90,
-      "interest_rate_daily": "1.5"
+      "interest_rate_daily": 1.5
     }
   ]
 }
 ```
 
 **Пример ответа (200 OK):**
-
 ```json
 {
   "decision": "accepted",
@@ -56,32 +55,9 @@
     "name": "QuickMoney",
     "max_amount": 1500000,
     "term_days": 15,
-    "interest_rate_daily": "2.5"
+    "interest_rate_daily": 2.5
   }
 }
-```
-
-**Curl пример:**
-
-```bash
-curl -X 'POST' \
-  'http://127.0.0.1:8000/api/scoring/pioneer' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-"user_data": {
-  "phone": "79123456789",
-  "age": 28,
-  "monthly_income": 45000,
-  "employment_type": "full_time",
-  "has_property": true
-},
-"products": [
-  {"name": "MicroLoan","max_amount":3000000,"term_days":30,"interest_rate_daily":"2.0"},
-  {"name": "QuickMoney","max_amount":1500000,"term_days":15,"interest_rate_daily":"2.5"},
-  {"name": "ConsumerLoan","max_amount":50000000,"term_days":90,"interest_rate_daily":"1.5"}
-]
-}'
 ```
 
 ---
@@ -93,13 +69,12 @@ curl -X 'POST' \
 Пользователь должен уже существовать в "БД".
 
 **Request body (JSON):**
-
 ```json
 {
   "user_data": {
     "phone": "79123456789",
     "age": 35,
-    "monthly_income": 50000,
+    "monthly_income": 5000000,
     "employment_type": "full_time",
     "has_property": true
   },
@@ -108,26 +83,25 @@ curl -X 'POST' \
       "name": "LoyaltyLoan",
       "max_amount": 10000000,
       "term_days": 30,
-      "interest_rate_daily": "2.0"
+      "interest_rate_daily": 2.0
     },
     {
       "name": "AdvantagePlus",
       "max_amount": 25000000,
       "term_days": 60,
-      "interest_rate_daily": "1.8"
+      "interest_rate_daily": 1.8
     },
     {
       "name": "PrimeCredit",
-      "max_amount": 100000000,
+      "max_amount": 50000000,
       "term_days": 120,
-      "interest_rate_daily": "1.3"
+      "interest_rate_daily": 1.3
     }
   ]
 }
 ```
 
 **Пример ответа (200 OK):**
-
 ```json
 {
   "decision": "accepted",
@@ -135,32 +109,9 @@ curl -X 'POST' \
     "name": "AdvantagePlus",
     "max_amount": 25000000,
     "term_days": 60,
-    "interest_rate_daily": "1.8"
+    "interest_rate_daily": 1.8
   }
 }
-```
-
-**Curl пример:**
-
-```bash
-curl -X 'POST' \
-  'http://127.0.0.1:8000/api/scoring/repeater' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-"user_data": {
-  "phone": "79123456789",
-  "age": 35,
-  "monthly_income": 50000,
-  "employment_type": "full_time",
-  "has_property": true
-},
-"products": [
-  {"name": "LoyaltyLoan","max_amount":10000000,"term_days":30,"interest_rate_daily":"2.0"},
-  {"name": "AdvantagePlus","max_amount":25000000,"term_days":60,"interest_rate_daily":"1.8"},
-  {"name": "PrimeCredit","max_amount":100000000,"term_days":120,"interest_rate_daily":"1.3"}
-]
-}'
 ```
 
 ---
@@ -172,10 +123,15 @@ curl -X 'POST' \
 - Python 3.12
 - Poetry
 
+Перед запуском сервиса нужно запустить все контейнеры Docker.
+```bash
+docker compose up -d
+```
+
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3556 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -d shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -192,13 +148,11 @@ poetry install --no-root --directory scoring-service
 ### 3. Установка PYTHONPATH
 
 **Windows (PowerShell):**
-
 ```powershell
 $Env:PYTHONPATH = "$(pwd)\scoring_service\src"
 ```
 
 **Linux/macOS:**
-
 ```bash
 export PYTHONPATH="$(pwd)/scoring_service/src"
 ```
@@ -208,12 +162,12 @@ export PYTHONPATH="$(pwd)/scoring_service/src"
 ### 4. Запуск сервиса
 
 ```bash
-poetry run --directory scoring-service uvicorn app.service:app
+poetry run --directory scoring-service uvicorn app.service:app --port 8002
 ```
 
-- Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
-- Эндпоинты `/api/scoring/pioneer` и `/api/scoring/repeater` готовы к тестированию.
-- Документация доступна по адресу: `http://127.0.0.1:8000/docs`.
+- Сервер будет доступен по адресу: `http://127.0.0.1:8002`  
+- Эндпоинты `/api/scoring/pioneer` и `/api/scoring/repeater` готовы к тестированию.  
+- Документация доступна по адресу: `http://127.0.0.1:8002/docs`
 
 ---
 
@@ -225,9 +179,16 @@ poetry run --directory scoring-service pytest -v
 
 ---
 
-**Примечание:**
+### 6. Kafka UI
 
-- Все команды выполняются из корня проекта после клонирования.
-- Все импорты внутри проекта настроены так, чтобы начинаться с `app`.
+Если запущены все контейнеры Docker (Kafka, Zookeeper, сервисы), можно использовать Kafka UI для мониторинга кластеров Kafka.
+
+- Kafka UI доступен по адресу: [http://127.0.0.1:8085](http://127.0.0.1:8085)  
+- Используется кластер с именем `local`, который подключается к Kafka на `kafka:29092`.
+
+---
+
+**Примечание:**  
+- Все команды выполняются из корня проекта после клонирования.  
+- Все импорты внутри проекта настроены так, чтобы начинаться с `app`.  
 - Для корректной работы убедитесь, что PYTHONPATH установлен на папку `src`.
-

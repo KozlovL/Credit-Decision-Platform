@@ -1,14 +1,15 @@
 from datetime import date
 
 from common.constants import CreditStatus, EmploymentType
-from sqlalchemy import Integer, Boolean, ForeignKey, Date, String, Enum
-from sqlalchemy.orm import Mapped, relationship, mapped_column
+from sqlalchemy import Boolean, Date, Enum, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base
 
 
-class User(Base):
+class User(Base):  # type: ignore[misc]
     """Модель пользователя."""
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     phone: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -27,7 +28,7 @@ class User(Base):
     )
 
 
-class CreditNote(Base):
+class CreditNote(Base):  # type: ignore[misc]
     """Модель записи в кредитной истории."""
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'), nullable=False)
