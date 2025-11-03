@@ -53,6 +53,11 @@ mypy_job:
   script:
     - poetry run mypy .
 
+variables:
+  POSTGRES_TEST_USER: postgres_test_user
+  POSTGRES_TEST_PASSWORD: postgres_test_password
+  POSTGRES_TEST_DB: postgres_test_db
+
 services:
   - name: postgres:17-alpine
     alias: postgres-test
@@ -69,6 +74,10 @@ test_job:
       - SERVICE: user-data-service
   variables:
     POSTGRES_TEST_HOST: postgres-test
+    POSTGRES_TEST_USER: $POSTGRES_TEST_USER
+    POSTGRES_TEST_PASSWORD: $POSTGRES_TEST_PASSWORD
+    POSTGRES_TEST_DB: $POSTGRES_TEST_DB
+    POSTGRES_TEST_PORT: 5432
     
   script:
     - poetry run pytest -v --tb=short
