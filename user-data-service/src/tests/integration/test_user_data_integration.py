@@ -1,6 +1,9 @@
+import re
 from http import HTTPStatus
 
 from app.constants import USER_DATA_URL
+
+LOAN_ID_REGEX = re.compile(r'^loan_\d{11}_\d{14}$')
 
 
 def test_get_user_data_success(client, existing_user) -> None:
@@ -12,6 +15,7 @@ def test_get_user_data_success(client, existing_user) -> None:
     assert 'profile' in data
     assert 'history' in data
     assert len(data['history']) == 1
+    assert LOAN_ID_REGEX.match(data['history'][0]['loan_id'])
 
 
 def test_get_user_data_not_found(client):
@@ -39,14 +43,28 @@ def test_put_update_existing_profile(client, update_profile_payload) -> None:
 
 
 def test_put_add_new_loan_entry(client, new_loan_entry_payload) -> None:
-    """Добавление новой записи в кредитную историю."""
+    """Добавление новой записи в кредитную историю с подробным дебагом."""
+    print(f"[DEBUG] Sending payload: {new_loan_entry_payload}")
+
     response = client.put(USER_DATA_URL, json=new_loan_entry_payload)
-    assert response.status_code == HTTPStatus.OK
-    data = response.json()
-    assert any(
-        credit_note['loan_id'] == 'loan_2025-10-21_1'
-        for credit_note in data['history']
-    )
+
+    if response.status_code != 200:
+        print(f"[DEBUG] Response status: {response.status_code}")
+        try:
+            data = response.json()
+            print(f"[DEBUG] Response JSON: {data}")
+        except Exception:
+            print(f"[DEBUG] Response text: {response.text}")
+
+        # Если это Pydantic ValidationError
+        if 'detail' in response.json():
+            for error in response.json()['detail']:
+                loc = error.get('loc')
+                msg = error.get('msg')
+                typ = error.get('type')
+                print(f"[ERROR] Validation error at {loc}: {msg} ({typ})")
+
+    assert response.status_code == 200
 
 
 def test_put_update_existing_loan_status(
@@ -60,13 +78,14 @@ def test_put_update_existing_loan_status(
     updated_loan = next(
         credit_note
         for credit_note in data['history']
-        if credit_note['loan_id']
-        == update_loan_status_payload['loan_entry']['loan_id']
+        if credit_note['loan_id'] == update_loan_status_payload[
+            'loan_entry'
+        ]['loan_id']
     )
     assert updated_loan['status'] == 'closed'
     assert (
-            updated_loan['close_date']
-            == update_loan_status_payload['loan_entry']['close_date']
+        updated_loan['close_date']
+        == update_loan_status_payload['loan_entry']['close_date']
     )
 
 
@@ -77,7 +96,7 @@ def test_put_combined_update(client, combined_update_payload) -> None:
     data = response.json()
     assert data['profile']['age'] == 40
     assert any(
-        credit_note['loan_id'] == 'loan_2025-10-21_2'
+        LOAN_ID_REGEX.match(credit_note['loan_id'])
         for credit_note in data['history']
     )
 

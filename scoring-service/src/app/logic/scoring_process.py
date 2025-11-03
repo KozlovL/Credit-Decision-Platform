@@ -1,9 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
 from common.constants import CreditStatus, EmploymentType
-from common.repository.user import CreditHistory
 from common.schemas.product import ProductWrite
-from common.schemas.user import UserDataPhoneWrite
+from common.schemas.user import CreditHistoryRead, UserDataPhoneWrite
 
 from app.constants import (
     ACCEPTED_STR,
@@ -31,7 +30,7 @@ class ScoringBase:
             available_products_with_score: dict[str, int],
             min_score_for_acceptance: int,
             products: list[ProductWrite],
-            credit_history: list[CreditHistory] | None = None,
+            credit_history: list[CreditHistoryRead] | None = None,
     ):
         self.user_data = user_data
         self.available_products_with_score = available_products_with_score
@@ -206,3 +205,9 @@ class ScoringRepeater(ScoringBase):
             ):
                 return True
         return False
+
+
+def generate_loan_id(phone: str) -> str:
+    """Генерирует уникальный loan_id в формате loan_{phone}_{timestamp}."""
+    timestamp = datetime.now(UTC).strftime('%Y%m%d%H%M%S')
+    return f'loan_{phone}_{timestamp}'

@@ -1,36 +1,49 @@
+import logging
+
 from common.constants import EmploymentType
-from common.repository.user import add_user
-from common.schemas.user import UserDataPhoneWrite
-from fastapi import APIRouter
+from common.schemas.user import (
+    CreditHistoryRead,
+    ProfileWrite,
+    UserDataPhoneWrite,
+)
+from fastapi import APIRouter, Depends, HTTPException
+from starlette import status
 
 from app.api.validators import check_products_are_exists
 from app.api.validators.pioneer import (
     check_if_pioneer,
 )
-from app.api.validators.repeater import (
-    get_user_or_404_by_phone,
+from app.clients.data_service_client import (
+    DataServiceClient,
+    get_data_service_client,
 )
 from app.constants import (
     MIN_PIONEER_SCORE_FOR_PRODUCT,
     MIN_REPEATER_SCORE_FOR_PRODUCT,
     PIONEER_PREFIX,
+    PIONEER_SCORING_URL,
     REPEATER_PREFIX,
     SCORING_PREFIX,
     SCORING_TAG,
 )
-from app.logic.scoring_process import ScoringPioneer, ScoringRepeater
+from app.logic.scoring_process import (
+    ScoringPioneer,
+    ScoringRepeater,
+)
 from app.repository.product import (
     get_available_pioneer_product_names,
     get_available_pioneer_products_with_score,
     get_available_repeater_product_names,
     get_available_repeater_products_with_score,
 )
+from app.repository.user import put_loan, put_profile_and_loan
 from app.schemas.scoring import (
     ScoringRead,
     ScoringWritePioneer,
     ScoringWriteRepeater,
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
 
 
@@ -41,10 +54,11 @@ router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
 )
 def scoring_pioneer(
         data: ScoringWritePioneer,
+        client: DataServiceClient = Depends(get_data_service_client),
 ) -> ScoringRead:
 
     # Проверяем является ли пользователь первичником
-    check_if_pioneer(phone=data.user_data.phone)
+    check_if_pioneer(phone=data.user_data.phone, client=client)
 
     # Проверяем существуют ли переданные продукты
     check_products_are_exists(
@@ -68,12 +82,31 @@ def scoring_pioneer(
     # Если есть подходящий продукт, то решение положительное и добавляем
     # запись в кредитную историю пользователя
     if available_product is not None:
-        # Добавляем пользователя в "БД"
-        user = add_user(user_data=data.user_data)
-        # Добавляем запись в кредитную историю пользователя
-        user.add_credit_note(
-            product_data=available_product,
-        )
+
+        # Достаем отдельно телефон и профиль
+        profile = data.user_data.model_dump()
+        phone = profile.pop('phone')
+
+        # Создаем пользователя и запись в кредитной истории
+        try:
+            put_profile_and_loan(
+                phone=phone,
+                user_data=ProfileWrite(**profile),
+                available_product=available_product,
+                client=client,
+            )
+        except HTTPException as error:
+            logger.error(
+                f'Ошибка сохранения профиля в user-data-service '
+                f'(телефон={phone}, '
+                f'endpoint={PIONEER_SCORING_URL}, '
+                f'код={error.status_code}'
+                f'): {error.detail}'
+            )
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail='Ошибка при сохранении данных в user-data-service'
+            ) from error
 
     return ScoringRead(decision=decision, product=available_product)
 
@@ -85,13 +118,27 @@ def scoring_pioneer(
 )
 def scoring_repeater(
         data: ScoringWriteRepeater,
+        client: DataServiceClient = Depends(get_data_service_client),
 ) -> ScoringRead:
 
     phone = data.phone
     products = data.products
 
     # Пытаемся получить пользователя из БД
-    user = get_user_or_404_by_phone(phone=phone)
+    try:
+        user_data = client.get_user_data(phone=phone)
+    except HTTPException as error:
+        logger.error(
+            f'Ошибка при получении данных из user-data-service '
+            f'(телефон={phone}, '
+            f'endpoint={PIONEER_SCORING_URL}, '
+            f'код={error.status_code}'
+            f'): {error.detail}'
+        )
+        raise HTTPException(
+            status_code=error.status_code,
+            detail='Ошибка при получении данных из user-data-service'
+        ) from error
 
     # Проверяем существуют ли переданные продукты
     check_products_are_exists(
@@ -99,21 +146,26 @@ def scoring_repeater(
         available_products=get_available_repeater_product_names()
     )
 
+    profile = user_data['profile']
+    credit_history = user_data['history']
+
     # Создаем класс скоринга повторника
     repeater_scoring = ScoringRepeater(
         user_data=UserDataPhoneWrite(
-            phone=user.phone,
-            age=user.age,
-            monthly_income=user.monthly_income,
-            employment_type=EmploymentType(user.employment_type),
-            has_property=user.has_property,
+            phone=user_data['phone'],
+            age=profile['age'],
+            monthly_income=profile['monthly_income'],
+            employment_type=EmploymentType(profile['employment_type']),
+            has_property=profile['has_property'],
         ),
         products=products,
         min_score_for_acceptance=MIN_REPEATER_SCORE_FOR_PRODUCT,
         available_products_with_score=(
             get_available_repeater_products_with_score()
         ),
-        credit_history=user.credit_history,
+        credit_history=[CreditHistoryRead(
+            **credit_note
+        ) for credit_note in credit_history],
     )
 
     # Проводим скоринг
@@ -123,8 +175,23 @@ def scoring_repeater(
     # запись в кредитную историю пользователя
     if available_product is not None:
         # Добавляем запись в кредитную историю пользователя
-        user.add_credit_note(
-            product_data=available_product
-        )
+        try:
+            put_loan(
+                phone=phone,
+                available_product=available_product,
+                client=client,
+            )
+        except HTTPException as error:
+            logger.error(
+                f'Ошибка сохранения записи в user-data-service '
+                f'(телефон={phone}, '
+                f'endpoint={PIONEER_SCORING_URL}, '
+                f'код={error.status_code}'
+                f'): {error.detail}'
+            )
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail='Ошибка при сохранении данных в user-data-service'
+            ) from error
 
     return ScoringRead(decision=decision, product=available_product)

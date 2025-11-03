@@ -17,3 +17,8 @@ REPEATER_PRODUCTS_JSON_PATH = os.path.join(
     os.path.dirname(__file__),
     'fixtures/product/repeater_products.json'
 )
+CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__),
+    '../config/config.yaml'
+)
+DATA_SERVICE_BASE_URL = 'http://localhost:8001'

@@ -15,6 +15,7 @@ NULL_PHONE_NUMBER = None
 EMPTY_PHONE_NUMBER = ''
 AGE_MIN = 0
 AGE_MAX = 120
+LOAN_ID_REGEX = re.compile(r'^loan_7\d{10}_\d{14}$')
 
 
 class EmploymentType(str, Enum):

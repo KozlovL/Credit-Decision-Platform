@@ -1,3 +1,5 @@
+from unittest.mock import patch, AsyncMock
+
 import pytest
 from common.constants import (
     PIONEER_PHONE_NUMBER, REPEATER_PHONE_NUMBER,
@@ -5,6 +7,7 @@ from common.constants import (
 )
 from fastapi.testclient import TestClient
 
+from app.clients.data_service_client import DataServiceClient
 from app.service import app
 
 

@@ -1,14 +1,18 @@
 from http import HTTPStatus
 
-from common.repository.user import get_users
 from fastapi import HTTPException
 
+from app.clients.data_service_client import DataServiceClient
 
-def check_if_pioneer(phone: str) -> None:
+
+def check_if_pioneer(phone: str, client: DataServiceClient) -> None:
     """Функция, вызывающая исключение, если пользователь - не первичник."""
-    for user in get_users():
-        if user.phone == phone:
-            raise HTTPException(
-                status_code=HTTPStatus.BAD_REQUEST,
-                detail='Пользователь уже есть в базе данных.'
-            )
+    try:
+        client.get_user_data(phone=phone)
+    except HTTPException:
+        return
+
+    raise HTTPException(
+        status_code=HTTPStatus.BAD_REQUEST,
+        detail='Пользователь не является первичником.'
+    )
