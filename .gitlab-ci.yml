@@ -75,9 +75,6 @@ test_job:
     POSTGRES_TEST_PORT: 5432
     
   script:
-    # Ждём 10 секунд, чтобы сервис Postgres успел подняться
-    - echo "Waiting 10 seconds for Postgres to start..."
-    - sleep 10
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
 
