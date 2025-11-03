@@ -32,8 +32,5 @@ async_session = async_sessionmaker(
 
 
 async def get_session() -> AsyncGenerator[AsyncSession]:
-    try:
-        async with async_session() as session:
-            yield session
-    except:
-        print("TEST_DATABASE_URL:", config.database_url)  # <- выводим перед вызовом
+    async with async_session() as session:
+        yield session
