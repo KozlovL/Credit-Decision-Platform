@@ -15,6 +15,8 @@ from app.models.user_data import CreditNote, User
 from app.service import app
 from app.constants import TEST_DATABASE_URL
 
+
+print("TEST_DATABASE_URL:", TEST_DATABASE_URL)  # <- выводим перед вызовом
 # Асинхронный движок
 try:
     engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
