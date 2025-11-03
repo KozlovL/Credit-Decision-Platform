@@ -71,13 +71,7 @@
 **Request body (JSON):**
 ```json
 {
-  "user_data": {
-    "phone": "79123456789",
-    "age": 35,
-    "monthly_income": 5000000,
-    "employment_type": "full_time",
-    "has_property": true
-  },
+  "phone": "79123456789",
   "products": [
     {
       "name": "LoyaltyLoan",
