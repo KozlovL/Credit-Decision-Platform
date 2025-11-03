@@ -89,17 +89,17 @@
 * Poetry
 * Docker
 
-Перед запуском сервиса нужно поднять контейнеры Docker:
-
-```bash
-docker compose up -d
-```
-
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
 git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
+```
+
+Перед запуском сервиса нужно поднять контейнеры Docker:
+
+```bash
+docker compose up -d
 ```
 
 ### 2. Создание виртуального окружения через Poetry
