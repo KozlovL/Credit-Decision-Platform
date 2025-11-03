@@ -60,8 +60,25 @@ test_job:
     matrix:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
-      - SERVICE: user-data-service
   script:
+    - poetry run pytest -v --tb=short
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+
+test_user_data_service:
+  extends: .base
+  stage: testing
+  services:
+    - name: postgres:17-alpine
+      alias: postgres-test
+      variables:
+        POSTGRES_USER: ${POSTGRES_TEST_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_TEST_DB}
+  variables:
+    DATABASE_URL: "postgresql+asyncpg://${POSTGRES_TEST_USER}:${POSTGRES_TEST_PASSWORD}@postgres-test:5433/${POSTGRES_TEST_DB}"
+  script:
+    # Ждём пока PostgreSQL станет готов
+    - until pg_isready -h postgres-test -U "$POSTGRES_TEST_USER"; do echo "Waiting for PostgreSQL..."; sleep 1; done
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
 
