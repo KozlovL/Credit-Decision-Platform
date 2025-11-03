@@ -20,7 +20,6 @@ class PreBase:
 
 Base = declarative_base(cls=PreBase)
 
-print("TEST_DATABASE_URL:", config.database_url)  # <- выводим перед вызовом
 engine = create_async_engine(
     url=config.database_url,
 )

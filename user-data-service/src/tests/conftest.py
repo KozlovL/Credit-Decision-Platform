@@ -1,5 +1,4 @@
 from datetime import UTC, date, datetime, timedelta
-import time
 from typing import AsyncGenerator
 
 import pytest
@@ -10,22 +9,13 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import selectinload
 from app.constants import TEST_DATABASE_URL
-try:
-    from app.core.db import Base, get_session
-except Exception as e:
-    print(TEST_DATABASE_URL)
-    raise e from e
+from app.core.db import Base, get_session
 from app.models.user_data import CreditNote, User
 from app.service import app
-from app.constants import TEST_DATABASE_URL
 
 
 # Асинхронный движок
-try:
-    engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
-except Exception as e:
-    print(TEST_DATABASE_URL)
-    raise e from e
+engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
 
 # Фабрика сессий
 AsyncSessionLocal = async_sessionmaker(
