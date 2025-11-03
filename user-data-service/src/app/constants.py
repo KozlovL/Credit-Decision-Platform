@@ -19,7 +19,8 @@ AVAILABLE_PRODUCTS = (
 TEST_DATABASE_URL = (
     f'postgresql+asyncpg://'
     f'{os.getenv("POSTGRES_TEST_USER")}:{os.getenv("POSTGRES_TEST_PASSWORD")}'
-    f'@127.0.0.1:5433/{os.getenv("POSTGRES_TEST_DB")}'
+    f'@{os.getenv("POSTGRES_TEST_HOST")}:{os.getenv("POSTGRES_TEST_PORT")}/'
+    f'{os.getenv("POSTGRES_TEST_DB")}'
 )
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
