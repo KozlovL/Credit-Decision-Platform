@@ -55,10 +55,10 @@ mypy_job:
 
 services:
   - postgres:17-alpine
-    variables:
-      POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
-      POSTGRES_USER: $POSTGRES_TEST_USER
-      POSTGRES_DB: $POSTGRES_TEST_DB
+  variables:
+    POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
+    POSTGRES_USER: $POSTGRES_TEST_USER
+    POSTGRES_DB: $POSTGRES_TEST_DB
 
 test_job:
   extends: .base
