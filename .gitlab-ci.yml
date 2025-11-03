@@ -4,7 +4,6 @@ stages:
   - linting
   - type-checking
   - testing
-  - testing_user-data-service
 
 .base:
   tags:
@@ -61,13 +60,7 @@ test_job:
     matrix:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
-  script:
-    - poetry run pytest -v --tb=short
-  coverage: '/TOTAL.*\s+(\d+%)$/'
-
-test_user_data_service:
-  extends: .base
-  stage: testing_user-data-service
+      - SERVICE: user-data-service
   services:
     - name: postgres:17-alpine
       alias: postgres-test
@@ -75,11 +68,8 @@ test_user_data_service:
         POSTGRES_USER: ${POSTGRES_TEST_USER}
         POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
         POSTGRES_DB: ${POSTGRES_TEST_DB}
-  variables:
-    DATABASE_URL: "postgresql+asyncpg://${POSTGRES_TEST_USER}:${POSTGRES_TEST_PASSWORD}@postgres-test:5433/${POSTGRES_TEST_DB}"
   script:
-    # Ждём пока PostgreSQL станет готов
-    - until pg_isready -h postgres-test -U "$POSTGRES_TEST_USER"; do echo "Waiting for PostgreSQL..."; sleep 1; done
+    - if [ "$SERVICE" = "user-data-service" ]; then until pg_isready -h postgres-test -U "$POSTGRES_TEST_USER"; do echo "Waiting for PostgreSQL..."; sleep 1; done; fi
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
 
