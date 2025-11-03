@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sys
 from logging.config import fileConfig
 from os import environ
@@ -18,7 +19,13 @@ if sys.platform.startswith('win'):
 # access to the values within the .ini file in use.
 config = context.config
 load_dotenv('.env')
-config.set_main_option('sqlalchemy.url', environ['DATABASE_URL'])
+config.set_main_option('sqlalchemy.url', (
+            f'postgresql+asyncpg://'
+            f'{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}'
+            f'@127.0.0.1:5432/{os.getenv("POSTGRES_DB")}'
+        )
+    )
+
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

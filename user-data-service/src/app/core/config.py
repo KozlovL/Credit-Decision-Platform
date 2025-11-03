@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import yaml
@@ -19,9 +20,11 @@ class Config(BaseSettings):
     """Конфиг приложения, берущий все значения из YAML."""
 
     database_url: str = (
-        'postgresql+asyncpg://test_user'
-        ':test_password@127.0.0.1:5432/test_db'
+        f'postgresql+asyncpg://'
+        f'{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}'
+        f'@127.0.0.1:5432/{os.getenv("POSTGRES_DB")}'
     )
+
     kafka: KafkaConfig | None = None
 
     @classmethod
@@ -45,9 +48,6 @@ class Config(BaseSettings):
             retry_timeout_ms=kafka_cfg.get('retry_timeout_ms', 2000),
             topic=kafka_cfg.get('topic', 'test_topic')
         )
-
-    class Config:
-        env_file = '.env'
 
 
 # создаём объект Config с database_url из .env
