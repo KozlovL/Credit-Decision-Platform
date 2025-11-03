@@ -50,7 +50,7 @@ git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y20
 cd shift_project
 ```
 
-* Запуск всех контейнеров:
+**Запуск всех контейнеров**
 
 ```bash
 docker compose up -d
@@ -89,8 +89,16 @@ cp user-data-service/.env.example user-data-service/.env
 cp .env.example .env
 ```
 
+---
 
-### 5. Запуск сервисов
+## 6. Миграции
+
+```bash
+poetry run --directory user-data-service alembic upgrade head
+```
+
+
+### 7. Запуск сервисов
 
 В отдельных терминалах для каждого сервиса:
 
@@ -214,13 +222,6 @@ poetry run --directory scoring-service uvicorn app.service:app --port 8002
 }
 ```
 
----
-
-## Миграции
-
-```bash
-poetry run --directory user-data-service alembic upgrade head
-```
 
 ---
 
