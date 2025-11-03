@@ -16,7 +16,11 @@ from app.service import app
 from app.constants import TEST_DATABASE_URL
 
 # Асинхронный движок
-engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
+try:
+    engine = create_async_engine(TEST_DATABASE_URL, echo=False, future=True)
+except Exception as e:
+    print(TEST_DATABASE_URL)
+    raise e from e
 
 # Фабрика сессий
 AsyncSessionLocal = async_sessionmaker(
