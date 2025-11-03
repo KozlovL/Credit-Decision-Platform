@@ -54,7 +54,8 @@ mypy_job:
     - poetry run mypy .
 
 services:
-  - postgres:17-alpine
+  - name: postgres:17-alpine
+    alias: postgres-test
     variables:
       POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
       POSTGRES_USER: $POSTGRES_TEST_USER
