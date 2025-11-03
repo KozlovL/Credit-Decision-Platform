@@ -1,9 +1,9 @@
 image: python:3.12-slim
 
 stages:
-  - testing
   - linting
   - type-checking
+  - testing
 
 .base:
   tags:
@@ -66,6 +66,8 @@ test_job:
   stage: testing
   parallel:
     matrix:
+      - SERVICE: flow-selection-service
+      - SERVICE: scoring-service
       - SERVICE: user-data-service
   variables:
     POSTGRES_TEST_HOST: postgres-test
