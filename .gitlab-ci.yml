@@ -68,10 +68,6 @@ test_job:
   services:
     - name: postgres:17-alpine
       alias: postgres-test
-      variables:
-        POSTGRES_USER: $POSTGRES_TEST_USER
-        POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
-        POSTGRES_DB: $POSTGRES_TEST_DB
   script:
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
