@@ -55,7 +55,7 @@ mypy_job:
 
 services:
   - postgres-test
-    image: 17-alpine
+    image: postgres:17-alpine
     variables:
       POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
       POSTGRES_USER: $POSTGRES_TEST_USER
