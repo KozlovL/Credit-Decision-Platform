@@ -9,8 +9,12 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import selectinload
-
-from app.core.db import Base, get_session
+from app.constants import TEST_DATABASE_URL
+try:
+    from app.core.db import Base, get_session
+except Exception as e:
+    print(TEST_DATABASE_URL)
+    raise e from e
 from app.models.user_data import CreditNote, User
 from app.service import app
 from app.constants import TEST_DATABASE_URL
