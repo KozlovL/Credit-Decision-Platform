@@ -3,8 +3,8 @@ import json
 import logging
 from typing import Any
 
-from aiokafka import (
-    AIOKafkaConsumer,  # type: ignore[import-untyped]
+from aiokafka import (  # type: ignore[import-untyped]
+    AIOKafkaConsumer,
     ConsumerRecord,
 )
 from aiokafka.errors import KafkaError  # type: ignore[import-untyped]
