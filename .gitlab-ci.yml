@@ -59,12 +59,6 @@ test_job:
   parallel:
     matrix:
       - SERVICE: user-data-service
-  variables:
-    POSTGRES_TEST_USER: postgres
-    POSTGRES_TEST_PASSWORD: postgres
-    POSTGRES_TEST_DB: test_db
-    POSTGRES_TEST_HOST: postgres-test
-    POSTGRES_TEST_PORT: 5432
   services:
     - name: postgres:17-alpine
       alias: postgres-test
@@ -72,7 +66,6 @@ test_job:
         POSTGRES_USER: $POSTGRES_TEST_USER
         POSTGRES_PASSWORD: $POSTGRES_TEST_PASSWORD
         POSTGRES_DB: $POSTGRES_TEST_DB
-        POSTGRES_PORT: 5432
   script:
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
