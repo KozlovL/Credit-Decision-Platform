@@ -212,9 +212,7 @@ poetry run --directory scoring-service uvicorn app.service:app --port 8002
 
 ```json
 {
-  "user_data": {
-    "phone": "72222222222"
-  },
+  "phone": "72222222222",
   "products": [
     {"name": "LoyaltyLoan", "max_amount": 10000000, "term_days": 30, "interest_rate_daily": 2.0},
     {"name": "AdvantagePlus", "max_amount": 25000000, "term_days": 60, "interest_rate_daily": 1.8}
