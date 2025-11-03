@@ -4,6 +4,7 @@ stages:
   - linting
   - type-checking
   - testing
+  - testing_user-data-service
 
 .base:
   tags:
