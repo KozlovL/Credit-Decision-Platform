@@ -58,8 +58,6 @@ test_job:
   stage: testing
   parallel:
     matrix:
-      - SERVICE: flow-selection-service
-      - SERVICE: scoring-service
       - SERVICE: user-data-service
   services:
     - name: postgres:17-alpine
@@ -70,11 +68,11 @@ test_job:
         POSTGRES_DB: $POSTGRES_TEST_DB
 
   variables:
-    POSTGRES_TEST_USER: postgres_test_user
-    POSTGRES_TEST_PASSWORD: postgres_test_password
-    POSTGRES_TEST_DB: postgres_test_db
+    POSTGRES_TEST_USER: $POSTGRES_TEST_USER
+    POSTGRES_TEST_PASSWORD: $POSTGRES_TEST_PASSWORD
+    POSTGRES_TEST_DB: $POSTGRES_TEST_DB
     POSTGRES_TEST_HOST: postgres-test
-    POSTGRES_TEST_PORT: 5432
+    POSTGRES_TEST_PORT: $POSTGRES_TEST_PORT
 
   script:
     - poetry run pytest -v --tb=short
