@@ -68,10 +68,11 @@ test_job:
     matrix:
       - SERVICE: user-data-service
   variables:
-    POSTGRES_TEST_HOST: postgres
-    POSTGRES_TEST_USER: $POSTGRES_TEST_USER
-    POSTGRES_TEST_DB: $POSTGRES_TEST_DB
-    POSTGRES_TEST_PORT: $POSTGRES_TEST_PORT
+    POSTGRES_TEST_HOST: postgres-test
+    POSTGRES_TEST_USER: ${POSTGRES_TEST_USER}
+    POSTGRES_TEST_PASSWORD: ${POSTGRES_TEST_PASSWORD}
+    POSTGRES_TEST_DB: ${POSTGRES_TEST_DB}
+    POSTGRES_TEST_PORT: ${POSTGRES_TEST_PORT}
     
   script:
     - poetry run pytest -v --tb=short
