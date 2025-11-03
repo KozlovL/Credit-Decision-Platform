@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import selectinload
 from app.constants import TEST_DATABASE_URL
-from app.core.db import Base, get_session
+from app.core.db import Base
+from app.core.db import get_session
 from app.models.user_data import CreditNote, User
 from app.service import app
 
