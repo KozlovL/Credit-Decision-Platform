@@ -59,6 +59,13 @@ test_job:
   parallel:
     matrix:
       - SERVICE: user-data-service
+  variables:
+    POSTGRES_TEST_USER: postgres
+    POSTGRES_TEST_PASSWORD: postgres
+    POSTGRES_TEST_DB: test_db
+    POSTGRES_TEST_HOST: postgres-test
+    POSTGRES_TEST_PORT: 5432
+    
   services:
     - name: postgres:17-alpine
       alias: postgres-test
