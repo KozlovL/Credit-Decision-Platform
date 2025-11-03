@@ -123,16 +123,18 @@
 - Python 3.12
 - Poetry
 
-Перед запуском сервиса нужно запустить все контейнеры Docker.
-```bash
-docker compose up -d
-```
+
 
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
 git clone -d shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
+```
+
+Перед запуском сервиса нужно запустить все контейнеры Docker.
+```bash
+docker compose up -d
 ```
 
 ---

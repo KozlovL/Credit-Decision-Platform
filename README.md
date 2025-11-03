@@ -24,11 +24,7 @@
 
 Для локальной разработки проект использует Docker:
 
-* Запуск всех контейнеров:
 
-```bash
-docker compose up -d
-```
 
 * **Kafka UI** доступен по адресу `http://localhost:8085` после запуска контейнеров.
 * Основные сервисы в Docker:
@@ -53,6 +49,13 @@ docker compose up -d
 git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
+
+* Запуск всех контейнеров:
+
+```bash
+docker compose up -d
+```
+
 
 ### 2. Создание виртуальных окружений через Poetry
 
