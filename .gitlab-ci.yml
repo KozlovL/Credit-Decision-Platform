@@ -69,7 +69,6 @@ test_job:
         POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
         POSTGRES_DB: ${POSTGRES_TEST_DB}
   script:
-    - if [ "$SERVICE" = "user-data-service" ]; then until pg_isready -h postgres-test -U "$POSTGRES_TEST_USER"; do echo "Waiting for PostgreSQL..."; sleep 1; done; fi
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
 
