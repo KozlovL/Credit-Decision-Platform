@@ -4,8 +4,7 @@ from json import load
 
 from sqlalchemy import select
 
-from app.constants import (PIONEER_PRODUCTS_JSON_PATH,
-                           REPEATER_PRODUCTS_JSON_PATH)
+from app.constants import PIONEER_PRODUCTS_JSON_PATH, REPEATER_PRODUCTS_JSON_PATH
 from app.core.db import async_session
 from app.models import Products
 
