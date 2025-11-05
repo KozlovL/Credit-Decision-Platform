@@ -122,7 +122,7 @@
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -d shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -d shift-3804-part-1 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 

@@ -92,7 +92,7 @@
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3804-part-1 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -128,10 +128,14 @@ export PYTHONPATH="$(pwd)/user-data-service/src"
 cp user-data-service/.env.example user-data-service/.env
 ```
 
-### 5. Выполнение миграций
+### 5. Выполнение миграций и заполнение БД данными продуктов
 
 ```bash
 poetry run --directory user-data-service alembic upgrade head
+```
+
+```bash
+poetry run --directory user-data-service python -m app.seed
 ```
 
 ### 6. Запуск сервиса
