@@ -14,3 +14,11 @@ CONFIG_PATH = os.path.join(
     '../config/config.yaml'
 )
 DATA_SERVICE_BASE_URL = 'http://localhost:8001'
+PIONEER_PRODUCTS_JSON_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'fixtures/pioneer_products.json'
+)
+REPEATER_PRODUCTS_JSON_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'fixtures/repeater_products.json'
+)
