@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, Field, ValidationError
-from src.app.constants import CONFIG_PATH
+from app.constants import CONFIG_PATH
 
 
 class RetryConfig(BaseModel):
