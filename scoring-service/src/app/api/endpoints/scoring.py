@@ -1,3 +1,4 @@
+import logging
 from datetime import UTC, datetime
 
 from common.constants import CreditStatus, EmploymentType
@@ -95,7 +96,6 @@ async def scoring_pioneer(
                 message
             )
         except Exception as exc:
-            import logging
             logging.error(
                 f'Ошибка отправки pioneer_accepted в Kafka '
                 f'(phone={data.user_data.phone}): {exc}"'
@@ -118,7 +118,6 @@ async def scoring_repeater(
     try:
         user_data = client.get_user_data(phone=phone)
     except Exception as exc:
-        import logging
         logging.error(
             f'Ошибка при получении данных из user-data-service '
             f'(phone={phone}): {exc}'
@@ -173,7 +172,6 @@ async def scoring_repeater(
         try:
             await producer.send(message)
         except Exception as exc:
-            import logging
             logging.error(
                 f'Ошибка отправки repeater_accepted в Kafka '
                 f'(phone={phone}): {exc}'
