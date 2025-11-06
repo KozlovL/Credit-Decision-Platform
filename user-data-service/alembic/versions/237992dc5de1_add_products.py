@@ -1,8 +1,8 @@
 """Add products
 
-Revision ID: bfe1031465ad
+Revision ID: 237992dc5de1
 Revises: f2c97c0e97c0
-Create Date: 2025-11-05 17:08:39.335835
+Create Date: 2025-11-06 13:28:24.558318
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bfe1031465ad'
+revision: str = '237992dc5de1'
 down_revision: Union[str, Sequence[str], None] = 'f2c97c0e97c0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -26,7 +26,7 @@ def upgrade() -> None:
     sa.Column('max_amount', sa.Integer(), nullable=False),
     sa.Column('term_days', sa.Integer(), nullable=False),
     sa.Column('interest_rate_daily', sa.Float(), nullable=False),
-    sa.Column('client_type', sa.Enum('PIONEER', 'REPEATER', name='clienttype'), nullable=False),
+    sa.Column('flow_type', sa.Enum('PIONEER', 'REPEATER', name='clienttype'), nullable=False),
     sa.CheckConstraint('interest_rate_daily > 0', name='check_interest_rate_positive'),
     sa.CheckConstraint('max_amount > 0', name='check_max_amount_positive'),
     sa.CheckConstraint('term_days > 0', name='check_term_days_positive'),

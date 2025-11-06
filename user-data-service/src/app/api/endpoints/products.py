@@ -16,11 +16,11 @@ router = APIRouter(prefix=PRODUCTS_PREFIX, tags=[PRODUCTS_TAG])
     summary='Получение списка продуктов с фильтрацией по типу пользователя'
 )
 async def get_products(
-        client_type: ClientType | None = Query(None),
+        flow_type: ClientType | None = Query(None),
         session: AsyncSession = Depends(get_session)
 ) -> list[ProductRead]:
     query = select(Products)
-    if client_type is not None:
-        query = query.where(Products.client_type == client_type)
+    if flow_type is not None:
+        query = query.where(Products.flow_type == flow_type)
     products = await session.execute(query)
     return products.scalars().all()  # type: ignore[return-value]

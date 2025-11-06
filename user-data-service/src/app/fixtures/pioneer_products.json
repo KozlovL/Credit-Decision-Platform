@@ -4,20 +4,20 @@
         "max_amount": 3000000,
         "term_days": 30,
         "interest_rate_daily": 2.0,
-        "client_type": "pioneer"
+        "flow_type": "pioneer"
     },
     {
         "name": "QuickMoney",
         "max_amount": 1500000,
         "term_days": 15,
         "interest_rate_daily": 2.5,
-        "client_type": "pioneer"
+        "flow_type": "pioneer"
     },
     {
         "name": "ConsumerLoan",
         "max_amount": 50000000,
         "term_days": 90,
         "interest_rate_daily": 1.5,
-        "client_type": "pioneer"
+        "flow_type": "pioneer"
     }
 ]

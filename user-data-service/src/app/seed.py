@@ -16,7 +16,7 @@ async def seed_data() -> None:
     async with async_session() as session:
         existing = await session.execute(select(Products))
         if existing.scalars().first():
-            logger.info('Данные уже существуют, пропускаем заполнение.')
+            logger.info('Данные уже существуют.')
             return
 
         with open(PIONEER_PRODUCTS_JSON_PATH, encoding='utf-8') as file:

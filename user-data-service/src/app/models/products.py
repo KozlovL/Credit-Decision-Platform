@@ -13,7 +13,7 @@ class Products(Base):  # type: ignore[misc]
     max_amount: Mapped[int] = mapped_column(Integer, nullable=False)
     term_days: Mapped[int] = mapped_column(Integer, nullable=False)
     interest_rate_daily: Mapped[float] = mapped_column(Float, nullable=False)
-    client_type: Mapped[ClientType] = mapped_column(
+    flow_type: Mapped[ClientType] = mapped_column(
         Enum(ClientType),
         nullable=False
     )

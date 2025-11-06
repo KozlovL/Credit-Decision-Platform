@@ -10,7 +10,7 @@
 ## Сервис: user-data-service
 
 
-### GET `/api/products?client_type=pioneer`
+### GET `/api/products?flow_type=pioneer`
 
 **Описание:** Получение списка продуктов с фильтрацией по типу клиента.
 
