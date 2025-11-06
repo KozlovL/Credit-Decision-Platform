@@ -29,10 +29,6 @@ CONFIG_PATH = os.path.join(
 )
 PRODUCTS_PREFIX = '/products'
 PRODUCTS_TAG = 'products'
-class ClientType(str, Enum):
-    """Типы клиентов."""
-    PIONEER = 'pioneer'
-    REPEATER = 'repeater'
 PIONEER_PRODUCTS_JSON_PATH = os.path.join(
     os.path.dirname(__file__),
     'fixtures/pioneer_products.json'

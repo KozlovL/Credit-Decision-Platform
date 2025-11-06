@@ -12,6 +12,7 @@ uvicorn = "^0.37.0"
 common = {path = "../common", develop = true}
 pyyaml = "^6.0.3"
 respx = "^0.22.0"
+redis = "^7.0.1"
 
 [tool.poetry.group.dev.dependencies]
 types-PyYAML = "^6.0.12.20240808"

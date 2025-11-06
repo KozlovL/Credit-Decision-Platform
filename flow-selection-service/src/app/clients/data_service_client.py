@@ -6,8 +6,7 @@ import httpx
 from fastapi import HTTPException
 from httpx import Response
 
-from app.config.config import Config
-from app.constants import CONFIG_PATH
+from app.config.config import Config, config
 
 
 class DataServiceClient:
@@ -62,9 +61,13 @@ class DataServiceClient:
         """Создание или обновление данных пользователя."""
         response = self._request('PUT', 'api/user-data', json=payload)
         return response.json()
+    
+    def get_products(self, flow_type: str | None) -> Any:
+        """Получение списка продуктов."""
+        response = self._request('GET', f'api/products?flow_type={flow_type}')
+        return response.json()
 
 
 def get_data_service_client() -> DataServiceClient:
     """Клиент для DI."""
-    config = Config.from_yaml(CONFIG_PATH)
     return DataServiceClient(config=config)

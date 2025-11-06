@@ -1,9 +1,10 @@
+from common.constants import ClientType
 from common.schemas.product import ProductRead
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.constants import PRODUCTS_PREFIX, PRODUCTS_TAG, ClientType
+from app.constants import PRODUCTS_PREFIX, PRODUCTS_TAG
 from app.core.db import get_session
 from app.models.products import Products
 

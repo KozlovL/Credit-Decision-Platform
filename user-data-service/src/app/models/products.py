@@ -1,7 +1,7 @@
+from common.constants import ClientType
 from sqlalchemy import CheckConstraint, Enum, Float, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.constants import ClientType
 from app.core.db import Base
 
 

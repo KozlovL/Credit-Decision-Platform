@@ -2,6 +2,7 @@ from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, Field, ValidationError
+from src.app.constants import CONFIG_PATH
 
 
 class RetryConfig(BaseModel):
@@ -15,8 +16,16 @@ class DataServiceConfig(BaseModel):
     retries: RetryConfig
 
 
+class RedisConfig(BaseModel):
+    host: str = Field(..., alias='host')
+    port: int = Field(..., alias='port')
+    db: int = Field(0, alias='db')
+    ttl: int = Field(300, alias='ttl')
+
+
 class Config(BaseModel):
     data_service: DataServiceConfig
+    redis: RedisConfig
 
     @classmethod
     def from_yaml(cls, file_path: Path | str) -> 'Config':
@@ -32,3 +41,6 @@ class Config(BaseModel):
             ) from error
         except ValidationError as error:
             raise ValueError(f'Неверная структура данных: {error}') from error
+
+
+config = Config.from_yaml(CONFIG_PATH)
