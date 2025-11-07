@@ -46,7 +46,7 @@
 ### 1. Клонирование репозитория и переход в корень проекта
 
 ```bash
-git clone -b shift-3804-part-1 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3804-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
