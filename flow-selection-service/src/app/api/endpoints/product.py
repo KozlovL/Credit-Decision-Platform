@@ -2,8 +2,7 @@ from common.constants import ClientType
 from common.schemas.user import UserPhoneWrite
 from fastapi import APIRouter, Depends
 
-from app.clients.data_service_client import (DataServiceClient,
-                                             get_data_service_client)
+from app.clients.data_service_client import DataServiceClient, get_data_service_client
 from app.clients.redis_client import RedisClient, get_redis_client
 from app.constants import PRODUCT_PREFIX, PRODUCTS_TAG
 from app.logic.user import get_products, is_repeater

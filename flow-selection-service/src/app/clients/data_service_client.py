@@ -61,7 +61,7 @@ class DataServiceClient:
         """Создание или обновление данных пользователя."""
         response = self._request('PUT', 'api/user-data', json=payload)
         return response.json()
-    
+
     def get_products(self, flow_type: str | None) -> Any:
         """Получение списка продуктов."""
         response = self._request('GET', f'api/products?flow_type={flow_type}')

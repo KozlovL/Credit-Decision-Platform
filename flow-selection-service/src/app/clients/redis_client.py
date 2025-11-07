@@ -28,9 +28,9 @@ class RedisClient:
         value = self.redis_client.get(key)
         if value is None:
             return None
-        return json.loads(value)
+        return json.loads(value)  # type: ignore[arg-type]
 
-    def set_to_cache(self, key: str, value: Any):
+    def set_to_cache(self, key: str, value: Any) -> None:
         """Сохранение объекта в Redis с TTL."""
         json_value = json.dumps(value)
         self.redis_client.setex(key, self.ttl, json_value)

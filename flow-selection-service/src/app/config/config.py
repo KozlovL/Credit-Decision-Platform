@@ -2,6 +2,7 @@ from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, Field, ValidationError
+
 from app.constants import CONFIG_PATH
 
 

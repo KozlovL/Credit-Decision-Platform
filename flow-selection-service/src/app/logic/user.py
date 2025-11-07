@@ -32,7 +32,7 @@ def get_products(
     flow_type: str,
     client: DataServiceClient,
     redis_client: RedisClient,
-) -> dict[str, Any]:
+) -> Any:
     """Получение списка продуктов с использованием Redis-кэша."""
 
     products = None
