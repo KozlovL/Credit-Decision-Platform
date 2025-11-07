@@ -7,19 +7,23 @@ from fastapi import APIRouter, Depends, Request
 
 from app.api.validators import check_products_are_exists
 from app.api.validators.pioneer import check_if_pioneer
-from app.clients.data_service_client import (DataServiceClient,
-                                             get_data_service_client)
-from app.constants import (MIN_PIONEER_SCORE_FOR_PRODUCT,
-                           MIN_REPEATER_SCORE_FOR_PRODUCT, PIONEER_PREFIX,
-                           REPEATER_PREFIX, SCORING_PREFIX, SCORING_TAG)
-from app.logic.scoring_process import (ScoringPioneer, ScoringRepeater,
-                                       generate_loan_id)
-from app.repository.product import (get_available_pioneer_product_names,
-                                    get_available_pioneer_products_with_score,
-                                    get_available_repeater_product_names,
-                                    get_available_repeater_products_with_score)
-from app.schemas.scoring import (ScoringRead, ScoringWritePioneer,
-                                 ScoringWriteRepeater)
+from app.clients.data_service_client import DataServiceClient, get_data_service_client
+from app.constants import (
+    MIN_PIONEER_SCORE_FOR_PRODUCT,
+    MIN_REPEATER_SCORE_FOR_PRODUCT,
+    PIONEER_PREFIX,
+    REPEATER_PREFIX,
+    SCORING_PREFIX,
+    SCORING_TAG,
+)
+from app.logic.scoring_process import ScoringPioneer, ScoringRepeater, generate_loan_id
+from app.repository.product import (
+    get_available_pioneer_product_names,
+    get_available_pioneer_products_with_score,
+    get_available_repeater_product_names,
+    get_available_repeater_products_with_score,
+)
+from app.schemas.scoring import ScoringRead, ScoringWritePioneer, ScoringWriteRepeater
 
 router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
 
@@ -156,7 +160,6 @@ async def scoring_repeater(
         try:
             await producer.send(message)
         except Exception as exc:
-            import logging
             logging.error(
                 f'Ошибка отправки repeater_accepted в Kafka '
                 f'(phone={phone}): {exc}'

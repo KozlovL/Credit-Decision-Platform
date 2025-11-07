@@ -1,5 +1,4 @@
 import os
-from enum import Enum
 
 from common.constants import API_PREFIX
 from dotenv import load_dotenv
