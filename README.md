@@ -91,14 +91,18 @@ cp .env.example .env
 
 ---
 
-## 6. Миграции
+### 5. Выполнение миграций и заполнение БД данными продуктов
 
 ```bash
 poetry run --directory user-data-service alembic upgrade head
 ```
 
+```bash
+poetry run --directory user-data-service python -m app.seed
+```
 
-### 7. Запуск сервисов
+
+### 6. Запуск сервисов
 
 В отдельных терминалах для каждого сервиса:
 
