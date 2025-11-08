@@ -27,6 +27,7 @@ class KafkaConsumer:
         self._consumer = AIOKafkaConsumer(
             self._kafka_config.topic,
             bootstrap_servers=kafka_config.url,
+            group_id='user-data-service',
             auto_offset_reset='earliest',
             session_timeout_ms=kafka_config.session_timeout_ms,
             enable_auto_commit=False,
