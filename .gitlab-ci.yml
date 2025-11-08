@@ -37,6 +37,8 @@ build_docker_images:
   image: docker:27.0.3
   services:
     - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
   parallel:
     matrix:
       - SERVICE: flow-selection-service
