@@ -1,0 +1,27 @@
+# общие
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+# python окружения
+.env
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+
+# тесты и кэш
+pytest_cache/
+.cache/
+.mypy_cache/
+
+# git
+.git
+.gitignore
+
+# прочее
+*.sqlite
+*.db
