@@ -92,7 +92,7 @@ build_docker_images:
       - SERVICE: scoring-service
       - SERVICE: user-data-service
   script:
-    - echo "Building $SERVICE image..."
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker build -f $SERVICE/Dockerfile -t $CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA $SERVICE
     - docker push $CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA
     - docker tag $CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY_IMAGE/$SERVICE:latest
