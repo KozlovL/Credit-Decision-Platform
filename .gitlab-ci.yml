@@ -117,11 +117,11 @@ build_docker_images:
       - SERVICE: scoring-service
       - SERVICE: user-data-service
   script:
-    - echo "$CI_REGISTRY_TOKEN" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-    - docker build -f $SERVICE/Dockerfile -t $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA .
-    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA
-    - docker tag $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:latest
-    - docker push $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:latest
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - docker build -f $SERVICE/Dockerfile -t "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA" $SERVICE
+    - docker push "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA"
+    - docker tag "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE/$SERVICE:latest"
+    - docker push "$CI_REGISTRY_IMAGE/$SERVICE:latest"
   rules:
     - changes:
         - "$SERVICE/**"
