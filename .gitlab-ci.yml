@@ -118,7 +118,7 @@ build_docker_images:
       - SERVICE: user-data-service
   script:
     - echo $CI_REGISTRY_TOKEN | docker login --username oauth --password-stdin $CI_REGISTRY
-    - docker build -f "$SERVICE/Dockerfile" -t "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA" "$SERVICE"
+    - docker build -f "$SERVICE/Dockerfile" -t "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA" .
     - docker push "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA"
     - docker tag "$CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE/$SERVICE:latest"
     - docker push "$CI_REGISTRY_IMAGE/$SERVICE:latest"
