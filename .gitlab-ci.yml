@@ -117,7 +117,7 @@ build_docker_images:
       - SERVICE: scoring-service
       - SERVICE: user-data-service
   script:
-    - echo "$YCR_TOKEN" | docker login --username "CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$YCR_TOKEN" | docker login --username "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - docker build -f $SERVICE/Dockerfile -t $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA .
     - docker push $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA
     - docker tag $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:$CI_COMMIT_SHORT_SHA $CI_REGISTRY/$CI_PROJECT_PATH/$SERVICE:latest
