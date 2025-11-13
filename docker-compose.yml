@@ -86,9 +86,9 @@ services:
         condition: service_started
     command: >
       bash -c "
-        poetry run alembic upgrade head &&
-        poetry run python -m app.seed &&
-        poetry run uvicorn app.service:app --host 0.0.0.0 --port 8001 --reload
+        alembic upgrade head &&
+        python -m app.seed &&
+        uvicorn app.service:app --host 0.0.0.0 --port 8001 --reload
       "
 
   flow-selection-service:
