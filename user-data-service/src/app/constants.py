@@ -22,10 +22,15 @@ TEST_DATABASE_URL = (
     f'@{os.getenv("POSTGRES_TEST_HOST")}:{os.getenv("POSTGRES_TEST_PORT")}/'
     f'{os.getenv("POSTGRES_TEST_DB")}'
 )
+
+# Берём имя конфига из переменной окружения (по умолчанию — config.local.yaml)
+CONFIG_FILE = os.getenv('CONFIG_FILE', 'config.local.yaml')
+
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
-    '../config.yaml'
+    f'../{CONFIG_FILE}'
 )
+
 PRODUCTS_PREFIX = '/products'
 PRODUCTS_TAG = 'products'
 PIONEER_PRODUCTS_JSON_PATH = os.path.join(
