@@ -7,13 +7,6 @@ metadata:
     student: lkozlov
     app: user-data-service
 data:
-  POSTGRES_DB: "data_service_db"
-  POSTGRES_HOST: "postgres-service.infra.svc.cluster.local"
-  POSTGRES_PORT: "5432"
-  POSTGRES_TEST_DB: "postgres_test_db"
-  POSTGRES_TEST_HOST: "postgres-service.infra.svc.cluster.local"
-  POSTGRES_TEST_PORT: "5433"
-
   KAFKA_BOOTSTRAP_SERVERS: "infra-kafka.infra.svc.cluster.local:9092"
   KAFKA_TOPIC: "lkozlov_scoring_results"
   KAFKA_SESSION_TIMEOUT_MS: "10000"

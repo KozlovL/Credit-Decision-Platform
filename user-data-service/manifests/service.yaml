@@ -4,14 +4,14 @@ metadata:
   name: user-data-service-lkozlov
   namespace: test
   labels:
-    student: lkozlov
     app: user-data-service
+    student: lkozlov
 spec:
+  type: ClusterIP
   selector:
     app: user-data-service
     student: lkozlov
   ports:
-    - protocol: TCP
+    - name: http
       port: 8001
       targetPort: 8001
-  type: ClusterIP

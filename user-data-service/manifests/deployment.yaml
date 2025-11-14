@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: user-data-service
-          image: shift.gitlab.yandexcloud.net:5050/shift-python/y2025/homeworks/kozlov-l/shift_project/user-data-service:4bcc3528
+          image: shift.gitlab.yandexcloud.net:5050/shift-python/y2025/homeworks/kozlov-l/shift_project/user-data-service:60a49272
           ports:
             - containerPort: 8001
           envFrom:
