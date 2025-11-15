@@ -1,6 +1,9 @@
 image: python:3.12-slim
 
 stages:
+  - linting
+  - type-checking
+  - testing
   - build
 
 .base:
@@ -23,11 +26,12 @@ stages:
         - "**/*.py"
         - ".gitlab-ci.yml"
         - "$SERVICE/poetry.lock"
-      when: never
+      when: on_success
     - changes:
         - "**.md"
       when: never
     - when: never
+
 
 
 lint_job:
