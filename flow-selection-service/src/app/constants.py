@@ -9,9 +9,12 @@ API_PRODUCT_PATH = f'{API_PREFIX}{PRODUCT_PREFIX}'
 FLOW_TYPE_JSON_FIELD_NAME = 'flow_type'
 AVAILABLE_PRODUCTS_JSON_FIELD_NAME = 'available_products'
 PRODUCTS_TAG = 'product'
+# Берём имя конфига из переменной окружения (по умолчанию — config.local.yaml)
+CONFIG_FILE = os.getenv('CONFIG_FILE', 'config.local.yaml')
+
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
-    'config/config.yaml'
+    f'../{CONFIG_FILE}'
 )
 DATA_SERVICE_BASE_URL = 'http://user-data-service:8001'
 PIONEER_PRODUCTS_JSON_PATH = os.path.join(

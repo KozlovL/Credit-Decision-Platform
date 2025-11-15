@@ -22,7 +22,7 @@ class RedisConfig(BaseModel):
     port: int = Field(..., alias='port')
     db: int = Field(0, alias='db')
     ttl: int = Field(300, alias='ttl')
-
+    password: str | None = Field(None, alias='password')
 
 class Config(BaseModel):
     data_service: DataServiceConfig

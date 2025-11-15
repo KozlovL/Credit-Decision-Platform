@@ -26,9 +26,12 @@ CONSUMER_LOAN_STR = 'ConsumerLoan'
 LOYALTY_LOAN_STR = 'LoyaltyLoan'
 ADVANTAGE_PLUS_STR = 'AdvantagePlus'
 PRIME_CREDIT_STR = 'PrimeCredit'
+# Берём имя конфига из переменной окружения (по умолчанию — config.local.yaml)
+CONFIG_FILE = os.getenv('CONFIG_FILE', 'config.local.yaml')
+
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
-    'config/config.yaml'
+    f'../{CONFIG_FILE}'
 )
 DATA_SERVICE_BASE_URL = 'http://localhost:8001'
 
