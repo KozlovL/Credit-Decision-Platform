@@ -7,7 +7,9 @@ metadata:
     student: lkozlov
     app: user-data-service
 data:
-  KAFKA_BOOTSTRAP_SERVERS: "infra-kafka.infra.svc.cluster.local:9092"
-  KAFKA_TOPIC: "lkozlov_scoring_results"
-  KAFKA_SESSION_TIMEOUT_MS: "10000"
-  KAFKA_RETRY_TIMEOUT_MS: "2000"
+  config.k8s.yaml: |
+    kafka:
+      bootstrap_servers: "infra-kafka.infra.svc.cluster.local:9092"
+      topic: "lkozlov_scoring_results"
+      session_timeout_ms: 10000
+      retry_timeout_ms: 2000
