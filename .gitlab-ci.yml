@@ -3,32 +3,6 @@ image: python:3.12-slim
 stages:
   - build
 
-.base:
-  tags:
-    - docker
-  before_script:
-    - cd $SERVICE
-    - pip install poetry
-    - export PYTHONPATH="$(pwd)/src"
-    - poetry install --no-root
-  cache:
-    key:
-      files:
-        - $SERVICE/poetry.lock
-    paths:
-      - /root/.cache/pypoetry
-      - /root/.cache/pip
-  rules:
-    - changes:
-        - "**/*.py"
-        - ".gitlab-ci.yml"
-        - "$SERVICE/poetry.lock"
-      when: on_success
-    - changes:
-        - "**.md"
-      when: never
-    - when: never
-
 build_docker_images:
   stage: build
   image: docker:27.0.3
