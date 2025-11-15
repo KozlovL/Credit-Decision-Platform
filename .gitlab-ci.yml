@@ -26,7 +26,7 @@ stages:
         - "**/*.py"
         - ".gitlab-ci.yml"
         - "$SERVICE/poetry.lock"
-      when: on_success
+      when: never
     - changes:
         - "**.md"
       when: never
