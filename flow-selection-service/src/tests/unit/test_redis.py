@@ -28,7 +28,7 @@ def test_get_products_from_service_when_cache_empty(mock_redis_client, mock_data
     assert result == products_from_service
     mock_data_client.get_products.assert_called_once_with(flow_type='pioneer')
     mock_redis_client.set_to_cache.assert_called_once_with(
-        key='pioneer_products', value=products_from_service
+        key='lkozlov:pioneer_products', value=products_from_service
     )
 
 

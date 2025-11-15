@@ -9,11 +9,11 @@ metadata:
 data:
   config.k8s.yaml: |
     data_service:
-    base_url: "http://user-data-service-lkozlov:8001"
-    timeout: 5
-    retries:
-      max_attempts: 2
-      delay: 1
+      base_url: "http://user-data-service-lkozlov:8001"
+      timeout: 5
+      retries:
+        max_attempts: 2
+        delay: 1
 
     kafka:
       bootstrap_servers: "infra-kafka.infra.svc.cluster.local:9092"
