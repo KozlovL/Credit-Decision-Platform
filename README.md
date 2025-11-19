@@ -178,7 +178,7 @@ docker compose exec {service-name} poetry run pytest -v
 
 ---
 
-## Деплой проекта на сервере через Kubernetes
+## Деплой проекта на сервере через Helm
 
 ### 1. Подключение к серверу и проброс портов
 
@@ -189,18 +189,21 @@ ssh -L 8081:localhost:8081 -L 8082:localhost:8082 -L 8080:localhost:8080 <user>@
 ### 2. Клонирование репозитория на сервере
 
 ```bash
-git clone -b shift-3898 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3899 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
-### 3. Применение всех манифестов Kubernetes
+### 3. Применение всех чартов Helm
 
 Для каждого сервиса:
 
 ```bash
-kubectl apply -f user-data-service/manifests
-kubectl apply -f flow-selection-service/manifests
-kubectl apply -f scoring-service/manifests
+helm install user-data-service user-data-service/charts/user-data-service -n test
+
+helm install flow-selection-service flow-selection-service/charts/flow-selection-service -n test
+
+helm install scoring-service scoring-service/charts/scoring-service -n test
+
 ```
 
 ### 4. Проброс портов сервисов для локального доступа

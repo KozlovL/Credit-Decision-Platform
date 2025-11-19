@@ -1,0 +1,6 @@
+apiVersion: v2
+name: flow-selection-service
+description: Helm chart для Flow Selection Service
+type: application
+version: 0.1.0
+appVersion: "latest"
