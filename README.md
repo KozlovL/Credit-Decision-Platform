@@ -198,11 +198,11 @@ cd shift_project
 Для каждого сервиса:
 
 ```bash
-helm install user-data-service user-data-service/charts/user-data-service -n test
+helm install lkozlov-user-data-service user-data-service/charts -n test
 
-helm install flow-selection-service flow-selection-service/charts/flow-selection-service -n test
+helm install lkozlov-flow-selection-service flow-selection-service/charts -n test
 
-helm install scoring-service scoring-service/charts/scoring-service -n test
+helm install lkozlov-scoring-service scoring-service/charts -n test
 
 ```
 
