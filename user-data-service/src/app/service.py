@@ -36,7 +36,7 @@ def create_application() -> FastAPI:
         lifespan=lifespan,
     )
 
-    setup_tracing(service_name='lkozlov-user-data-service')
+    setup_tracing(service_name='user-data-service-lkozlov')
 
     # автоматическая инструментализация FastAPI
     instrument_fastapi(application)  # type: ignore[no-untyped-call]
@@ -47,7 +47,7 @@ def create_application() -> FastAPI:
     # middleware для метрик
     application.middleware('http')(
         lambda request, call_next: metrics_middleware(
-            request, call_next, 'lkozlov-user-data-service'
+            request, call_next, 'user-data-service-lkozlov'
         )
     )
 
