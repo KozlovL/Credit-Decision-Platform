@@ -8,9 +8,9 @@ from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from app.api.routers import main_router
 from app.core.config import config
+from app.core.tracing import instrument_fastapi, instrument_httpx, setup_tracing
 from app.kafka.consumer import KafkaConsumer
 from app.middleware.metrics import metrics_middleware
-from app.core.tracing import setup_tracing, instrument_fastapi, instrument_httpx
 
 
 @asynccontextmanager
@@ -39,10 +39,10 @@ def create_application() -> FastAPI:
     setup_tracing(service_name='user-data-service')
 
     # автоматическая инструментализация FastAPI
-    instrument_fastapi(application)
+    instrument_fastapi(application)  # type: ignore[no-untyped-call]
 
     # автоматическая инструментализация httpx клиентов
-    instrument_httpx()
+    instrument_httpx()  # type: ignore[no-untyped-call]
 
     # middleware для метрик
     application.middleware('http')(
@@ -53,7 +53,7 @@ def create_application() -> FastAPI:
 
     # endpoint /metrics для Prometheus
     @application.get('/metrics')
-    def metrics():
+    def metrics():  # type: ignore[no-untyped-def]
         return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
     application.include_router(main_router)

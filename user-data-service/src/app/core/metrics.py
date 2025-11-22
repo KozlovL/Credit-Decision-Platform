@@ -1,6 +1,5 @@
 from prometheus_client import Counter, Histogram
 
-
 # Счётчик всех HTTP запросов (для rate и ошибок)
 http_requests_total = Counter(
     'http_requests_total',
@@ -16,10 +15,8 @@ http_request_duration_seconds = Histogram(
     buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0]
 )
 
-def init_service_metrics(service_name: str, version: str = '1.0.0'):
+def init_service_metrics(service_name: str, version: str = '1.0.0') -> None:
     """Инициализация метрик при запуске сервиса (placeholder)."""
-    pass
 
-def shutdown_service_metrics():
+def shutdown_service_metrics() -> None:
     """Шатдаун метрик при остановке сервиса (placeholder)."""
-    pass

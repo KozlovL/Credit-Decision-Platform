@@ -1,9 +1,11 @@
-import time
-import uuid
 import logging
+import time
+from typing import Any
+import uuid
+
 from fastapi import Request
 
-from app.core.metrics import http_requests_total, http_request_duration_seconds
+from app.core.metrics import http_request_duration_seconds, http_requests_total
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +13,7 @@ def generate_request_id() -> str:
     """Генерирует короткий request_id (16 символов)."""
     return uuid.uuid4().hex[:16]
 
-async def metrics_middleware(request: Request, call_next, service_name: str):
+async def metrics_middleware(request: Request, call_next, service_name: str):  # type: ignore[no-untyped-def]
 
     start_time = time.time()
     try:
