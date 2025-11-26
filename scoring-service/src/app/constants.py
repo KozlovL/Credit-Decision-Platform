@@ -1,5 +1,4 @@
 import os
-from enum import IntEnum
 
 from common.constants import API_PREFIX
 

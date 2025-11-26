@@ -5,6 +5,13 @@ data_service:
     max_attempts: 2
     delay: 1
 
+antifraud_service:
+  base_url: "http://antifraud-service:8003"
+  timeout: 5
+  retries:
+    max_attempts: 2
+    delay: 1
+
 kafka:
   bootstrap_servers: "kafka:29092"
   topic: "scoring_results"
