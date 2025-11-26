@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 
 import redis
 from common.constants import (
-    CREDIT_EXPIRATION_DAYS,
     AgeType,
     CreditStatus,
     EmploymentType,

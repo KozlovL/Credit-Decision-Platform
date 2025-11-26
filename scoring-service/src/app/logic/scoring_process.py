@@ -8,7 +8,7 @@ from common.constants import (
     MonthlyIncomeType,
 )
 from common.schemas.product import ProductWrite
-from common.schemas.user import CreditHistoryRead, ProfileWrite, UserDataPhoneWrite
+from common.schemas.user import CreditHistoryRead, UserDataPhoneWrite
 
 from app.clients.antifraud_service_client import AntifraudServiceClient
 from app.constants import (
