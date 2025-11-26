@@ -1,6 +1,6 @@
 # Строка из 11 цифр начинающая на 7
 import re
-from enum import Enum
+from enum import Enum, IntEnum
 
 PHONE_REGEX = re.compile(r'^7\d{10}$')
 API_PREFIX = '/api'
@@ -16,6 +16,7 @@ EMPTY_PHONE_NUMBER = ''
 AGE_MIN = 0
 AGE_MAX = 120
 LOAN_ID_REGEX = re.compile(r'^loan_7\d{10}_\d{14}$')
+CREDIT_EXPIRATION_DAYS = 180
 
 
 class EmploymentType(str, Enum):
@@ -29,12 +30,34 @@ class CreditStatus(str, Enum):
     """Статус кредита."""
     OPEN = 'open'
     CLOSED = 'closed'
+    OVERDUE = 'overdue'
 
 
 class ClientType(str, Enum):
     """Типы клиентов."""
     PIONEER = 'pioneer'
     REPEATER = 'repeater'
+
+
+
+class AgeType(IntEnum):
+    """Типы возраста."""
+    ADULT_AGE = 18
+    AVERAGE_AGE = 26
+    OLD_AGE = 41
+
+
+class MonthlyIncomeType(IntEnum):
+    """Типы заработка."""
+    LOW_INCOME = 1000000
+    AVERAGE_INCOME = 3000000
+    HIGH_INCOME = 5000000
+
+
+class LastCreditAmountTypes(IntEnum):
+    """Типы объема последнего кредита."""
+    LOW_AMOUNT = 5000000
+    AVERAGE_AMOUNT = 10000001
 
 
 EXISTING_USER_DATA = {

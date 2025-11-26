@@ -1,24 +1,16 @@
 from datetime import UTC, datetime, timedelta
 
-from common.constants import CreditStatus, EmploymentType
+from common.constants import (AgeType, CreditStatus, EmploymentType,
+                              LastCreditAmountTypes, MonthlyIncomeType)
 from common.schemas.product import ProductWrite
 from common.schemas.user import CreditHistoryRead, UserDataPhoneWrite
 
-from app.constants import (
-    ACCEPTED_STR,
-    CREDIT_EXPIRATION_DAYS,
-    FIRST_CREDIT_DAYS_TO_GET_SCORE,
-    MIN_PIONEER_SCORE_FOR_PRODUCT,
-    MIN_REPEATER_SCORE_FOR_PRODUCT,
-    REJECTED_STR,
-    AgeType,
-    LastCreditAmountTypes,
-    MonthlyIncomeType,
-)
-from app.repository.product import (
-    get_available_pioneer_products_with_score,
-    get_available_repeater_products_with_score,
-)
+from app.constants import (ACCEPTED_STR, CREDIT_EXPIRATION_DAYS,
+                           FIRST_CREDIT_DAYS_TO_GET_SCORE,
+                           MIN_PIONEER_SCORE_FOR_PRODUCT,
+                           MIN_REPEATER_SCORE_FOR_PRODUCT, REJECTED_STR)
+from app.repository.product import (get_available_pioneer_products_with_score,
+                                    get_available_repeater_products_with_score)
 
 
 class ScoringBase:

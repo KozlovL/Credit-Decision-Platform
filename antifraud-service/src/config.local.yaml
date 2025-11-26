@@ -1,0 +1,12 @@
+data_service:
+  base_url: "http://user-data-service:8001"
+  timeout: 5
+  retries:
+    max_attempts: 2
+    delay: 1
+
+redis:
+  host: "redis"
+  port: 6379
+  db: 0
+  ttl: 86400

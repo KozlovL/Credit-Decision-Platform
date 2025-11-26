@@ -63,7 +63,7 @@ class ValidateStatusAndCloseDateMixin:
         if (
             (
                 self.close_date is None
-                and self.status != CreditStatus.OPEN
+                and self.status == CreditStatus.CLOSED
             )
             or
                 (

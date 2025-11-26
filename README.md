@@ -98,6 +98,15 @@ docker compose up -d
     "monthly_income": 3000000,
     "employment_type": "full_time",
     "has_property": false
+  },
+  "loan_entry": {
+    "loan_id": "loan_72222222222_20251103123000",
+    "product_name": "ConsumerLoan",
+    "amount": 1000000,
+    "issue_date": "2025-11-03",
+    "term_days": 90,
+    "status": "open",
+    "close_date": null
   }
 }
 ```

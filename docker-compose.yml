@@ -104,6 +104,16 @@ services:
     depends_on:
       - user-data-service
 
+  antifraud-service:
+    build:
+      context: .
+      dockerfile: antifraud-service/Dockerfile
+    ports:
+      - "8003:8003"
+    depends_on:
+      - user-data-service
+      - redis
+
 volumes:
   postgres_data:
   postgres_test_data:

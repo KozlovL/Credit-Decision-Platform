@@ -37,7 +37,7 @@ def upgrade() -> None:
     sa.Column('amount', sa.Integer(), nullable=False),
     sa.Column('issue_date', sa.Date(), nullable=False),
     sa.Column('term_days', sa.Integer(), nullable=False),
-    sa.Column('status', sa.Enum('OPEN', 'CLOSED', name='creditstatus'), nullable=False),
+    sa.Column('status', sa.Enum('OPEN', 'CLOSED', 'OVERDUE', name='creditstatus'), nullable=False),
     sa.Column('close_date', sa.Date(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')

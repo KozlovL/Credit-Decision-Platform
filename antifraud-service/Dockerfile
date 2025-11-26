@@ -16,7 +16,7 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 ENV POETRY_NO_INTERACTION=1
 
 # Файлы зависимостей сервиса
-COPY scoring-service/pyproject.toml scoring-service/poetry.lock ./
+COPY antifraud-service/pyproject.toml antifraud-service/poetry.lock ./
 
 # Копируем общие модули
 COPY common /common
@@ -25,7 +25,7 @@ COPY common /common
 RUN poetry install --no-root
 
 # Исходники сервиса
-COPY scoring-service/src ./src
+COPY antifraud-service/src ./src
 
 # Run stage
 FROM python:3.12-slim
@@ -51,6 +51,6 @@ COPY --from=builder /app/src ./src
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH=/app/src:/common
 
-EXPOSE 8002
+EXPOSE 8003
 
-CMD ["uvicorn", "app.service:app", "--host", "0.0.0.0", "--port", "8002"]
+CMD ["uvicorn", "app.service:app", "--host", "0.0.0.0", "--port", "8003"]
