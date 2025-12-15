@@ -31,6 +31,12 @@ class CreditStatus(str, Enum):
     CLOSED = 'closed'
 
 
+class ClientType(str, Enum):
+    """Типы клиентов."""
+    PIONEER = 'pioneer'
+    REPEATER = 'repeater'
+
+
 EXISTING_USER_DATA = {
     'phone': '71111111111',
     'age': 30,

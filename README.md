@@ -46,7 +46,7 @@
 ### 1. Клонирование репозитория и переход в корень проекта
 
 ```bash
-git clone -b shift-3804-1 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3804-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -91,14 +91,18 @@ cp .env.example .env
 
 ---
 
-## 6. Миграции
+### 5. Выполнение миграций и заполнение БД данными продуктов
 
 ```bash
 poetry run --directory user-data-service alembic upgrade head
 ```
 
+```bash
+poetry run --directory user-data-service python -m app.seed
+```
 
-### 7. Запуск сервисов
+
+### 6. Запуск сервисов
 
 В отдельных терминалах для каждого сервиса:
 

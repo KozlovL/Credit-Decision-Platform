@@ -18,50 +18,66 @@ from app.constants import (
 def test_select_flow_pioneer(
         client,
         pioneer_phone,
-        phone_payload
+        phone_payload,
+        pioneer_products
 ):
     """Тест выбора флоу первичника."""
-    # Мокаем запрос к сервису данных
     with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
-        # Возвращаем 404 для первичника
-        mock.get(
-            f'/api/user-data?phone={pioneer_phone}'
-        ).respond(status_code=HTTPStatus.NOT_FOUND)
+        # Мокаем user-data — возвращает 404 (новый пользователь)
+        mock.get(f'/api/user-data?phone={pioneer_phone}').respond(
+            status_code=HTTPStatus.NOT_FOUND
+        )
 
+        # Мокаем products — возвращает список продуктов для pioneer
+        mock.get(f'/api/products?flow_type={PIONEER_FLOW_TYPE}').respond(
+            status_code=HTTPStatus.OK,
+            json=pioneer_products
+        )
+
+        # Делаем запрос
         response = client.post(
             API_PRODUCT_PATH,
             json=phone_payload(pioneer_phone)
         )
-        assert response.status_code == HTTPStatus.OK
-        data = response.json()
-        assert data[FLOW_TYPE_JSON_FIELD_NAME] == PIONEER_FLOW_TYPE
-        assert len(data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME]) > 0
+
+    # Проверяем результат
+    assert response.status_code == HTTPStatus.OK
+    data = response.json()
+    assert data[FLOW_TYPE_JSON_FIELD_NAME] == PIONEER_FLOW_TYPE
+    assert data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME] == pioneer_products
 
 
 def test_select_flow_repeater(
         client,
         repeater_phone,
-        phone_payload
+        phone_payload,
+        repeater_products
 ):
     """Тест выбора флоу повторника."""
-    # Мокаем запрос к сервису данных
     with respx.mock(base_url=DATA_SERVICE_BASE_URL) as mock:
-        # Возвращаем 200 для повторинка
-        mock.get(
-            f'/api/user-data?phone={repeater_phone}'
-        ).respond(
+        # Мокаем user-data — возвращает 200 (повторник)
+        mock.get(f'/api/user-data?phone={repeater_phone}').respond(
             status_code=HTTPStatus.OK,
             json={'phone': repeater_phone, 'profile': {}, 'history': []}
         )
 
+        # Мокаем products — возвращает список продуктов для repeater
+        mock.get(f'/api/products?flow_type={REPEATER_FLOW_TYPE}').respond(
+            status_code=HTTPStatus.OK,
+            json=repeater_products
+        )
+
+        # Делаем запрос
         response = client.post(
             API_PRODUCT_PATH,
             json=phone_payload(repeater_phone)
         )
-        assert response.status_code == HTTPStatus.OK
-        data = response.json()
-        assert data[FLOW_TYPE_JSON_FIELD_NAME] == REPEATER_FLOW_TYPE
-        assert len(data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME]) > 0
+
+    # Проверяем результат
+    assert response.status_code == HTTPStatus.OK
+    data = response.json()
+    assert data[FLOW_TYPE_JSON_FIELD_NAME] == REPEATER_FLOW_TYPE
+    assert data[AVAILABLE_PRODUCTS_JSON_FIELD_NAME] == repeater_products
 
 
 @pytest.mark.parametrize('phone, expected_status', [
