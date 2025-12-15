@@ -16,9 +16,12 @@ class ProductRead(BaseModel):
     term_days: PositiveInt
     interest_rate_daily: PositiveFloat
 
-    # Выбрасываем ошибку при передаче лишних полей
-    model_config = ConfigDict(extra='forbid')
+    # Чтобы схема могла принимать ORM-объекты
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ProductWrite(ProductRead):
     """Схема продукта для записи."""
+
+    # Выбрасываем ошибку при передаче лишних полей
+    model_config = ConfigDict(extra='forbid')

@@ -9,6 +9,12 @@
 
 ## Сервис: user-data-service
 
+
+### GET `/api/products?flow_type=pioneer`
+
+**Описание:** Получение списка продуктов с фильтрацией по типу клиента.
+
+
 ### PUT `/api/user_data`
 
 **Описание:** Создание нового пользователя.
@@ -92,7 +98,7 @@
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3804-1 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -128,10 +134,14 @@ export PYTHONPATH="$(pwd)/user-data-service/src"
 cp user-data-service/.env.example user-data-service/.env
 ```
 
-### 5. Выполнение миграций
+### 5. Выполнение миграций и заполнение БД данными продуктов
 
 ```bash
 poetry run --directory user-data-service alembic upgrade head
+```
+
+```bash
+poetry run --directory user-data-service python -m app.seed
 ```
 
 ### 6. Запуск сервиса

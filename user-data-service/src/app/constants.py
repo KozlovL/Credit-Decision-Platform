@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 
 from common.constants import API_PREFIX
 from dotenv import load_dotenv
@@ -25,4 +26,18 @@ TEST_DATABASE_URL = (
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
     '../config.yaml'
+)
+PRODUCTS_PREFIX = '/products'
+PRODUCTS_TAG = 'products'
+class ClientType(str, Enum):
+    """Типы клиентов."""
+    PIONEER = 'pioneer'
+    REPEATER = 'repeater'
+PIONEER_PRODUCTS_JSON_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'fixtures/pioneer_products.json'
+)
+REPEATER_PRODUCTS_JSON_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'fixtures/repeater_products.json'
 )
