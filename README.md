@@ -1,4 +1,4 @@
-# Shift Project
+# Credit Decision Platform (Платформа для принятия кредитных решений)
 
 ## Автор
 
