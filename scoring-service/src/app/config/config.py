@@ -15,6 +15,10 @@ class DataServiceConfig(BaseModel):
     retries: RetryConfig
 
 
+class AntifraudServiceConfig(DataServiceConfig):
+    pass
+
+
 class KafkaConfig(BaseModel):
     url: str
     session_timeout_ms: int
@@ -24,6 +28,7 @@ class KafkaConfig(BaseModel):
 
 class Config(BaseModel):
     data_service: DataServiceConfig
+    antifraud_service: AntifraudServiceConfig
     kafka: KafkaConfig
 
     @classmethod
@@ -62,7 +67,27 @@ class Config(BaseModel):
                 retries=retries
             )
 
-            return cls(data_service=data_service, kafka=kafka)
+            # Разбираем antifraud_service
+            antifraud_service_raw = raw_data.get('antifraud_service', {})
+            retries_raw = antifraud_service_raw.get('retries', {})
+            retries = RetryConfig(
+                max_attempts=retries_raw.get('max_attempts', 3),
+                delay=retries_raw.get('delay', 1)
+            )
+            antifraud_service = AntifraudServiceConfig(
+                base_url=antifraud_service_raw.get(
+                    'base_url',
+                    'http://localhost:8003'
+                ),
+                timeout=antifraud_service_raw.get('timeout', 5),
+                retries=retries
+            )
+
+            return cls(
+                data_service=data_service,
+                kafka=kafka,
+                antifraud_service=antifraud_service
+            )
 
         except FileNotFoundError as e:
             raise FileNotFoundError(

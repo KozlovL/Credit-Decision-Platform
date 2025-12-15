@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "antifraud-service"
+version = "0.1.0"
+description = ""
+authors = ["Kozlov Leonid <jimjpoggers@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.118.0"
+uvicorn = "^0.37.0"
+common = {path = "../common", develop = true}
+pyyaml = "^6.0.3"
+respx = "^0.22.0"
+redis = "^7.1.0"
+
+[tool.poetry.group.dev.dependencies]
+types-PyYAML = "^6.0.12.20240808"
+pytest = "^8.4.2"
+httpx = "^0.28.1"
+ruff = "^0.13.3"
+mypy = "^1.18.2"
+pytest-asyncio = "^1.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

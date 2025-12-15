@@ -1,19 +1,22 @@
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from common.constants import CreditStatus, EmploymentType
+from common.constants import (
+    AgeType,
+    EmploymentType,
+    LastCreditAmountTypes,
+    MonthlyIncomeType,
+)
 from common.schemas.product import ProductWrite
 from common.schemas.user import CreditHistoryRead, UserDataPhoneWrite
 
+from app.clients.antifraud_service_client import AntifraudServiceClient
 from app.constants import (
     ACCEPTED_STR,
-    CREDIT_EXPIRATION_DAYS,
     FIRST_CREDIT_DAYS_TO_GET_SCORE,
     MIN_PIONEER_SCORE_FOR_PRODUCT,
     MIN_REPEATER_SCORE_FOR_PRODUCT,
     REJECTED_STR,
-    AgeType,
-    LastCreditAmountTypes,
-    MonthlyIncomeType,
 )
 from app.repository.product import (
     get_available_pioneer_products_with_score,
@@ -26,6 +29,7 @@ class ScoringBase:
 
     def __init__(
             self,
+            antifraud_service_client: AntifraudServiceClient,
             user_data: UserDataPhoneWrite,
             available_products_with_score: dict[str, int],
             min_score_for_acceptance: int,
@@ -37,8 +41,9 @@ class ScoringBase:
         self.min_score_for_acceptance = min_score_for_acceptance
         self.credit_history = credit_history
         self.products = products
+        self.antifraud_service_client = antifraud_service_client
 
-    def immediate_rejection(self) -> bool:
+    def immediate_rejection(self) -> Any:
         """Метод проверки немедленного отказа."""
         return True
 
@@ -169,13 +174,13 @@ class ScoringPioneer(ScoringBase):
     available_products_with_score = get_available_pioneer_products_with_score()
     min_score_for_acceptance = MIN_PIONEER_SCORE_FOR_PRODUCT
 
-    def immediate_rejection(self) -> bool:
-        """Метод, возвращающий True, при немедленном отказе первичнику."""
-        return (
-                self.user_data.age < AgeType.ADULT_AGE
-                or self.user_data.monthly_income < MonthlyIncomeType.LOW_INCOME
-                or self.user_data.employment_type == EmploymentType.UNEMPLOYED
-        )
+    def immediate_rejection(self) -> Any:
+        """Возвращает True, если антифрод первичника выдает немедленный отказ."""
+        payload = {
+            'user_data': self.user_data.model_dump()
+        }
+        response = self.antifraud_service_client.check_pioneer(payload)
+        return response['decision'] == 'rejected'
 
 
 class ScoringRepeater(ScoringBase):
@@ -183,28 +188,18 @@ class ScoringRepeater(ScoringBase):
     available_products_with_score = get_available_repeater_products_with_score()
     min_score_for_acceptance = MIN_REPEATER_SCORE_FOR_PRODUCT
 
-    def immediate_rejection(self) -> bool:
-        """Метод, возвращающий True, при немедленном отказе повторнику."""
-        return (
-                self.user_data.age < AgeType.ADULT_AGE
-                # Проверяем наличие долгов
-                or self.has_debt()
-        )
+    def immediate_rejection(self) -> Any:
+        """Возвращает True, если антифрод повторника выдает немедленный отказ."""
+        user_data = self.user_data.model_dump()
+        phone = user_data.pop('phone')
 
-    def has_debt(self) -> bool:
-        """Метод, возвращающий True, если в кредитной истории есть долг."""
-        # Проходим по всем записям
-        for credit_note in self.credit_history or []:
-            # Если кредит закрыт, то идем на следующую итерацию
-            if credit_note.status is CreditStatus.CLOSED:
-                continue
-            # Иначе проверяем просрочку на 180 дней
-            if (
-                    datetime.now(UTC).date() - credit_note.issue_date
-                    > timedelta(days=CREDIT_EXPIRATION_DAYS)
-            ):
-                return True
-        return False
+        payload = {
+            'phone': phone,
+            'current_profile': user_data,
+        }
+
+        response = self.antifraud_service_client.check_repeater(payload)
+        return response['decision'] == 'rejected'
 
 
 def generate_loan_id(phone: str) -> str:

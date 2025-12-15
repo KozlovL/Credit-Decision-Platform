@@ -2,11 +2,16 @@ import logging
 from datetime import UTC, datetime
 
 from common.constants import CreditStatus, EmploymentType
+from common.schemas.scoring import ScoringWritePioneer, ScoringWriteRepeater
 from common.schemas.user import CreditHistoryRead, UserDataPhoneWrite
 from fastapi import APIRouter, Depends, Request
 
 from app.api.validators import check_products_are_exists
 from app.api.validators.pioneer import check_if_pioneer
+from app.clients.antifraud_service_client import (
+    AntifraudServiceClient,
+    get_antifraud_service_client,
+)
 from app.clients.data_service_client import DataServiceClient, get_data_service_client
 from app.constants import (
     MIN_PIONEER_SCORE_FOR_PRODUCT,
@@ -23,7 +28,7 @@ from app.repository.product import (
     get_available_repeater_product_names,
     get_available_repeater_products_with_score,
 )
-from app.schemas.scoring import ScoringRead, ScoringWritePioneer, ScoringWriteRepeater
+from app.schemas.scoring import ScoringRead
 
 router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
 
@@ -32,13 +37,16 @@ router = APIRouter(prefix=SCORING_PREFIX, tags=[SCORING_TAG])
 async def scoring_pioneer(
         data: ScoringWritePioneer,
         request: Request,
-        client: DataServiceClient = Depends(get_data_service_client),
+        data_service_client: DataServiceClient = Depends(get_data_service_client),
+        antifraud_service_client: AntifraudServiceClient = (
+            Depends(get_antifraud_service_client)
+        )
 ) -> ScoringRead:
     # Получаем продюсера из app.state
     producer = request.app.state.producer
 
     # Проверяем на первичника
-    check_if_pioneer(phone=data.user_data.phone, client=client)
+    check_if_pioneer(phone=data.user_data.phone, client=data_service_client)
     check_products_are_exists(
         products=data.products,
         available_products=get_available_pioneer_product_names()
@@ -46,6 +54,7 @@ async def scoring_pioneer(
 
     # Создаем класс скоринга
     pioneer_scoring = ScoringPioneer(
+        antifraud_service_client=antifraud_service_client,
         user_data=data.user_data,
         products=data.products,
         min_score_for_acceptance=MIN_PIONEER_SCORE_FOR_PRODUCT,
@@ -96,7 +105,10 @@ async def scoring_pioneer(
 async def scoring_repeater(
         data: ScoringWriteRepeater,
         request: Request,
-        client: DataServiceClient = Depends(get_data_service_client),
+        data_service_client: DataServiceClient = Depends(get_data_service_client),
+        antifraud_service_client: AntifraudServiceClient = (
+            Depends(get_antifraud_service_client)
+        )
 ) -> ScoringRead:
     producer = request.app.state.producer
 
@@ -104,7 +116,7 @@ async def scoring_repeater(
     products = data.products
 
     try:
-        user_data = client.get_user_data(phone=phone)
+        user_data = data_service_client.get_user_data(phone=phone)
     except Exception as exc:
         logging.error(
             f'Ошибка при получении данных из user-data-service '
@@ -129,6 +141,7 @@ async def scoring_repeater(
     )
 
     repeater_scoring = ScoringRepeater(
+        antifraud_service_client=antifraud_service_client,
         user_data=user_data_model,
         products=products,
         min_score_for_acceptance=MIN_REPEATER_SCORE_FOR_PRODUCT,

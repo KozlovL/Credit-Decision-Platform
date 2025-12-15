@@ -42,6 +42,7 @@ lint_job:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
       - SERVICE: user-data-service
+      - SERVICE: antifraud-service
   script:
     - poetry run ruff check .
 
@@ -53,6 +54,7 @@ mypy_job:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
       - SERVICE: user-data-service
+      - SERVICE: antifraud-service
   script:
     - poetry run mypy .
 
@@ -72,6 +74,7 @@ test_job:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
       - SERVICE: user-data-service
+      - SERVICE: antifraud-service
   variables:
     POSTGRES_TEST_HOST: postgres-test
     POSTGRES_TEST_USER: postgres_test_user
@@ -92,6 +95,7 @@ build_docker_images:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
       - SERVICE: user-data-service
+      - SERVICE: antifraud-service
   script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY_URL
     - docker build -f $SERVICE/Dockerfile -t $CI_REGISTRY_IMAGE/$SERVICE:$CI_COMMIT_SHORT_SHA -t $CI_REGISTRY_IMAGE/$SERVICE:latest .

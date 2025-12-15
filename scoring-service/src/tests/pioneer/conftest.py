@@ -9,6 +9,19 @@ from httpx import ASGITransport, AsyncClient
 from app.api.routers import main_router
 from app.clients.data_service_client import DataServiceClient, get_data_service_client
 from app.constants import CONSUMER_LOAN_STR, MICROLOAN_STR, QUICK_MONEY_STR
+from app.clients.antifraud_service_client import AntifraudServiceClient, get_antifraud_service_client
+
+
+@pytest.fixture
+def mock_antifraud_service_client():
+    """Мок для AntifraudServiceClient."""
+    client = Mock(spec=AntifraudServiceClient)
+    
+    # По умолчанию любые проверки первичника/повторника проходят
+    client.check_pioneer = Mock(return_value={'decision': 'passed', 'reasons': []})
+    client.check_repeater = Mock(return_value={'decision': 'passed', 'reasons': []})
+    
+    return client
 
 
 @pytest.fixture
@@ -23,12 +36,13 @@ def mock_data_service_client():
 
 
 @pytest_asyncio.fixture
-async def app_with_mocked_kafka(mock_data_service_client):
+async def app_with_mocked_kafka(mock_data_service_client, mock_antifraud_service_client):
     app = FastAPI()
     app.include_router(main_router)
 
     # Заменяем Depends внутри эндпоинта
     app.dependency_overrides[get_data_service_client] = lambda: mock_data_service_client
+    app.dependency_overrides[get_antifraud_service_client] = lambda: mock_antifraud_service_client
 
     # Мокаем продюсер
     mock_producer = AsyncMock()
