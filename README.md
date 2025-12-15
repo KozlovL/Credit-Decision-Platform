@@ -24,8 +24,6 @@
 
 Для локальной разработки проект использует Docker:
 
-
-
 * **Kafka UI** доступен по адресу `http://localhost:8085` после запуска контейнеров.
 * Основные сервисы в Docker:
 
@@ -39,94 +37,48 @@
 
 **Требования:**
 
+* Docker и Docker Compose
 * Python 3.12
 * Poetry
-* Docker
 
 ### 1. Клонирование репозитория и переход в корень проекта
 
 ```bash
-git clone -b shift-3804-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3850 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
-**Запуск всех контейнеров**
+### 2. Копирование .env файла
+
+```bash
+cp .env.example .env
+```
+
+> Теперь все сервисы будут использовать настройки из `.env`.
+
+### 3. Запуск всех контейнеров
 
 ```bash
 docker compose up -d
 ```
 
+> Все сервисы запустятся в фоне, включая Kafka и Kafka UI.
 
-### 2. Создание виртуальных окружений через Poetry
+### 4. Доступ к сервисам
 
-```bash
-poetry install --no-root --directory user-data-service
-poetry install --no-root --directory flow-selection-service
-poetry install --no-root --directory scoring-service
-```
-
-### 3. Установка PYTHONPATH
-
-**Windows (PowerShell):**
-
-```powershell
-$Env:PYTHONPATH = "$(pwd)\{service-name}\src"
-```
-
-**Linux/macOS:**
-
-```bash
-export PYTHONPATH="$(pwd)/{service-name}/src"
-```
-
-Где `{service-name}` — это `user-data-service`, `flow-selection-service` или `scoring-service`.
-
-
-### 4. Создание .env файла
-
-```bash
-cp user-data-service/.env.example user-data-service/.env
-cp .env.example .env
-```
-
----
-
-### 5. Выполнение миграций и заполнение БД данными продуктов
-
-```bash
-poetry run --directory user-data-service alembic upgrade head
-```
-
-```bash
-poetry run --directory user-data-service python -m app.seed
-```
-
-
-### 6. Запуск сервисов
-
-В отдельных терминалах для каждого сервиса:
 
 #### user-data-service
 
-```bash
-poetry run --directory user-data-service uvicorn app.service:app --port 8001
-```
 
 * Документация: [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)
 
 #### flow-selection-service
 
-```bash
-poetry run --directory flow-selection-service uvicorn app.service:app --port 8000
-```
 
 * Документация: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 #### scoring-service
 
-```bash
-poetry run --directory scoring-service uvicorn app.service:app --port 8002
-```
 
 * Документация: [http://127.0.0.1:8002/docs](http://127.0.0.1:8002/docs)
 
@@ -167,8 +119,6 @@ poetry run --directory scoring-service uvicorn app.service:app --port 8002
 }
 ```
 
----
-
 ### flow-selection-service
 
 #### Определение флоу пользователя
@@ -190,8 +140,6 @@ poetry run --directory scoring-service uvicorn app.service:app --port 8002
   ]
 }
 ```
-
----
 
 ### scoring-service
 
@@ -224,15 +172,12 @@ poetry run --directory scoring-service uvicorn app.service:app --port 8002
 }
 ```
 
-
 ---
 
 ## Запуск тестов
 
-В терминале для соответствующего сервиса:
-
 ```bash
-poetry run --directory {service-name} pytest -v
+docker compose exec {service-name} poetry run pytest -v
 ```
 
 ---
@@ -241,5 +186,5 @@ poetry run --directory {service-name} pytest -v
 
 * Все суммы указаны в копейках.
 * Для корректной работы сервисов необходимо, чтобы Docker-контейнеры Kafka и Kafka UI были запущены.
-* Kafka UI доступен по адресу: http://localhost:8085
+* Kafka UI доступен по адресу: [http://localhost:8085](http://localhost:8085)
 * Все импорты внутри проекта настроены так, чтобы начинаться с `app`.

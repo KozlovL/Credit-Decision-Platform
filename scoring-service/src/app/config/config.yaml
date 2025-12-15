@@ -1,12 +1,12 @@
 data_service:
-  base_url: "http://localhost:8001"
+  base_url: "http://user-data-service:8001"
   timeout: 5
   retries:
     max_attempts: 2
     delay: 1
 
 kafka:
-  bootstrap_servers: "localhost:9092"
+  bootstrap_servers: "kafka:29092"
   topic: "scoring_results"
   session_timeout_ms: 10000
   retry_timeout_ms: 2000

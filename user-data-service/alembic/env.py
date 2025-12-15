@@ -21,7 +21,8 @@ load_dotenv('.env')
 config.set_main_option('sqlalchemy.url', (
             f'postgresql+asyncpg://'
             f'{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}'
-            f'@127.0.0.1:5432/{os.getenv("POSTGRES_DB")}'
+            f'@{os.getenv("POSTGRES_HOST")}:{os.getenv("POSTGRES_PORT")}/'
+            f'{os.getenv("POSTGRES_DB")}'
         )
     )
 
