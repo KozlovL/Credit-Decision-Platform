@@ -10,6 +10,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 build/
 develop-eggs/
@@ -46,7 +47,6 @@ coverage.xml
 
 # Environment variables / secrets
 .env
-.env.*
 *.env
 
 # OS generated files

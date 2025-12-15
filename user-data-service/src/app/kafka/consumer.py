@@ -14,7 +14,7 @@ from common.repository.user import (
 )
 from common.schemas.user import UserDataPhoneWrite
 
-from app.config.config import KafkaConfig
+from app.core.config import KafkaConfig
 from app.repository.user_data import (
     create_existing_credit_note,
     get_credit_history,
@@ -32,7 +32,7 @@ class KafkaConsumer:
         self._consumer = AIOKafkaConsumer(
             self._kafka_config.topic,
             bootstrap_servers=kafka_config.url,
-            group_id='scoring-service-group',
+            group_id='user-data-service',
             auto_offset_reset='earliest',
             session_timeout_ms=kafka_config.session_timeout_ms,
             enable_auto_commit=False,

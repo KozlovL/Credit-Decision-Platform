@@ -34,4 +34,11 @@ services:
     ports:
       - "8085:8080"
 
-
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: data_service_user
+      POSTGRES_PASSWORD: data_service_password
+      POSTGRES_DB: data_service_db
+    ports:
+      - "5432:5432"

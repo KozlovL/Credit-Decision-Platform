@@ -15,5 +15,5 @@ AVAILABLE_PRODUCTS = (
 )
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),
-    'config/config.yaml'
+    '../config.yaml'
 )
