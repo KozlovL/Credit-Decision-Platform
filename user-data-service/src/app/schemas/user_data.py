@@ -7,11 +7,7 @@ from common.schemas.user import (
     UserPhoneWrite,
     ValidateStatusAndCloseDateMixin,
 )
-from pydantic import (
-    BaseModel,
-    ConfigDict,
-    field_validator,
-)
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class UserDataRead(UserPhoneWrite):
@@ -19,6 +15,9 @@ class UserDataRead(UserPhoneWrite):
 
     profile: ProfileWrite
     history: list[CreditHistoryRead]
+
+    # Чтобы схема могла принимать ORM-объекты
+    model_config = ConfigDict(from_attributes=True)
 
 
 class LoanCreate(CreditHistoryRead):

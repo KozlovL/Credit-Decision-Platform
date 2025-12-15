@@ -1,6 +1,9 @@
 import os
 
 from common.constants import API_PREFIX
+from dotenv import load_dotenv
+
+load_dotenv()
 
 USER_DATA_PREFIX = '/user-data'
 USER_DATA_TAG = 'user-data'
@@ -12,6 +15,12 @@ AVAILABLE_PRODUCTS = (
     'LoyaltyLoan',
     'AdvantagePlus',
     'PrimeCredit'
+)
+TEST_DATABASE_URL = (
+    f'postgresql+asyncpg://'
+    f'{os.getenv("POSTGRES_TEST_USER")}:{os.getenv("POSTGRES_TEST_PASSWORD")}'
+    f'@{os.getenv("POSTGRES_TEST_HOST")}:{os.getenv("POSTGRES_TEST_PORT")}/'
+    f'{os.getenv("POSTGRES_TEST_DB")}'
 )
 CONFIG_PATH = os.path.join(
     os.path.dirname(__file__),

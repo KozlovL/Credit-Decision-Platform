@@ -16,15 +16,13 @@
 Выбор флоу (новый/существующий клиент) по номеру телефона.
 
 **Request body (JSON):**
-
 ```json
 {
-  "phone": "71111112111"
+  "phone": "71111111111"
 }
 ```
 
 **Пример ответа (200 OK):**
-
 ```json
 {
   "flow_type": "pioneer",
@@ -33,34 +31,22 @@
       "name": "MicroLoan",
       "max_amount": 3000000,
       "term_days": 30,
-      "interest_rate_daily": "2.0"
+      "interest_rate_daily": 2.0
     },
     {
       "name": "QuickMoney",
       "max_amount": 1500000,
       "term_days": 15,
-      "interest_rate_daily": "2.5"
+      "interest_rate_daily": 2.5
     },
     {
       "name": "ConsumerLoan",
       "max_amount": 50000000,
       "term_days": 90,
-      "interest_rate_daily": "1.5"
+      "interest_rate_daily": 1.5
     }
   ]
 }
-```
-
-**Curl пример:**
-
-```bash
-curl -X 'POST' \
-  'http://127.0.0.1:8000/api/products' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-"phone": "71111112111"
-}'
 ```
 
 ---
@@ -69,14 +55,23 @@ curl -X 'POST' \
 
 **Требования:**
 
-- Python 3.12
-- Poetry
+- Python 3.12  
+- Poetry  
+
+
+
+---
 
 ### 1. Клонирование репозитория и переход в корневую директорию
 
 ```bash
-git clone -b shift-3428 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3750-part-2 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
+```
+
+Перед запуском сервиса нужно запустить все контейнеры Docker:
+```bash
+docker compose up -d
 ```
 
 ---
@@ -92,13 +87,11 @@ poetry install --no-root --directory flow-selection-service
 ### 3. Установка PYTHONPATH
 
 **Windows (PowerShell):**
-
 ```powershell
 $Env:PYTHONPATH = "$(pwd)\flow_selection_service\src"
 ```
 
 **Linux/macOS:**
-
 ```bash
 export PYTHONPATH="$(pwd)/flow_selection_service/src"
 ```
@@ -108,12 +101,12 @@ export PYTHONPATH="$(pwd)/flow_selection_service/src"
 ### 4. Запуск сервиса
 
 ```bash
-poetry run --directory flow-selection-service uvicorn app.service:app
+poetry run --directory flow-selection-service uvicorn app.service:app --port 8000
 ```
 
-- Сервер будет доступен по адресу: `http://127.0.0.1:8000`.
-- Эндпоинт `/api/products` готов к тестированию.
-- Документация доступна по адресу: `http://127.0.0.1:8000/docs`.
+- Сервер будет доступен по адресу: `http://127.0.0.1:8000`  
+- Эндпоинт `/api/products` готов к тестированию.  
+- Документация доступна по адресу: `http://127.0.0.1:8000/docs`
 
 ---
 
@@ -125,9 +118,7 @@ poetry run --directory flow-selection-service pytest -v
 
 ---
 
-**Примечание:**
-
-- Все команды выполняются из корня проекта после клонирования.
-- Все импорты внутри проекта настроены так, чтобы начинаться с `app` (например, `from app.api.router import main_router`).
+**Примечание:**  
+- Все команды выполняются из корня проекта после клонирования.  
+- Все импорты внутри проекта настроены так, чтобы начинаться с `app`.  
 - Для корректной работы убедитесь, что PYTHONPATH установлен на папку `src`.
-

@@ -2,11 +2,13 @@ import os
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
 
 from app.constants import CONFIG_PATH
 
+load_dotenv()
 
 class KafkaConfig(BaseModel):
     """Конфиг Kafka."""
@@ -22,7 +24,8 @@ class Config(BaseSettings):
     database_url: str = (
         f'postgresql+asyncpg://'
         f'{os.getenv("POSTGRES_USER")}:{os.getenv("POSTGRES_PASSWORD")}'
-        f'@127.0.0.1:5432/{os.getenv("POSTGRES_DB")}'
+        f'@{os.getenv("POSTGRES_HOST")}:{os.getenv("POSTGRES_PORT")}'
+        f'/{os.getenv("POSTGRES_DB")}'
     )
 
     kafka: KafkaConfig | None = None

@@ -15,7 +15,6 @@ from app.constants import (
     MIN_PIONEER_SCORE_FOR_PRODUCT,
     MIN_REPEATER_SCORE_FOR_PRODUCT,
     PIONEER_PREFIX,
-    REJECTED_STR,
     REPEATER_PREFIX,
     SCORING_PREFIX,
     SCORING_TAG,
@@ -122,7 +121,7 @@ async def scoring_repeater(
             f'Ошибка при получении данных из user-data-service '
             f'(phone={phone}): {exc}'
         )
-        return ScoringRead(decision=REJECTED_STR, product=None)
+        raise exc from exc
 
     check_products_are_exists(
         products=products,

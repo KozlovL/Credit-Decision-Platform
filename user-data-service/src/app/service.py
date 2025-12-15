@@ -31,8 +31,6 @@ def create_application() -> FastAPI:
     """Создает FastAPI-приложение с lifespan и роутерами."""
     application = FastAPI(
         lifespan=lifespan,
-        openapi_url='/user-data-service/openapi.json',
-        docs_url='/user-data-service/docs',
     )
     application.include_router(main_router)
     return application

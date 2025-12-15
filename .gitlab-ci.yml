@@ -53,6 +53,14 @@ mypy_job:
   script:
     - poetry run mypy .
 
+services:
+  - name: postgres:17-alpine
+    alias: postgres-test
+    variables:
+      POSTGRES_PASSWORD: postgres_test_password
+      POSTGRES_USER: postgres_test_user
+      POSTGRES_DB: postgres_test_db
+
 test_job:
   extends: .base
   stage: testing
@@ -61,6 +69,13 @@ test_job:
       - SERVICE: flow-selection-service
       - SERVICE: scoring-service
       - SERVICE: user-data-service
+  variables:
+    POSTGRES_TEST_HOST: postgres-test
+    POSTGRES_TEST_USER: postgres_test_user
+    POSTGRES_TEST_PASSWORD: postgres_test_password
+    POSTGRES_TEST_DB: postgres_test_db
+    POSTGRES_TEST_PORT: 5432
+    
   script:
     - poetry run pytest -v --tb=short
   coverage: '/TOTAL.*\s+(\d+%)$/'
