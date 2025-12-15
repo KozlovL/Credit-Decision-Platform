@@ -1,3 +1,4 @@
+import os
 
 from common.constants import API_PREFIX
 
@@ -11,4 +12,8 @@ AVAILABLE_PRODUCTS = (
     'LoyaltyLoan',
     'AdvantagePlus',
     'PrimeCredit'
+)
+CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__),
+    'config/config.yaml'
 )
