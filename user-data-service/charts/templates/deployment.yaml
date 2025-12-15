@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.fullnameOverride }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullnameOverride }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.imagePullSecret }}
+
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.targetPort }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.postgresSecretName }}
+
+          env:
+            - name: CONFIG_FILE
+              value: "{{ .Values.configFileName }}"
+
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/src/{{ .Values.configFileName }}
+              subPath: {{ .Values.configFileName }}
+
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Values.fullnameOverride }}-config

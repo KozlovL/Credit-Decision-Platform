@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.fullnameOverride }}-config
+  namespace: {{ .Values.namespace }}
+data:
+  {{ .Values.configFileName }}: |
+    kafka:
+      bootstrap_servers: "{{ .Values.kafka.bootstrapServers }}"
+      topic: "{{ .Values.kafka.topic }}"
+      session_timeout_ms: {{ .Values.kafka.sessionTimeoutMs }}
+      retry_timeout_ms: {{ .Values.kafka.retryTimeoutMs }}

@@ -1,0 +1,30 @@
+namespace: test
+fullnameOverride: "flow-selection-service-lkozlov"
+
+image:
+  repository: shift.gitlab.yandexcloud.net:5050/shift-python/y2025/homeworks/kozlov-l/shift_project/flow-selection-service
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  port: 8000
+  targetPort: 8000
+
+configFileName: "config.k8s.yaml"
+
+# Redis credentials можно вынести в Secret, для теста оставим plain text
+redis:
+  host: "redis-master.infra.svc.cluster.local"
+  port: 6379
+  db: 0
+  ttl: 300
+  password: "shift_2025_python"
+
+dataService:
+  baseUrl: "http://user-data-service-lkozlov:8001"
+  timeout: 5
+  retries:
+    maxAttempts: 2
+    delay: 1
+
+imagePullSecret: "lkozlov-container-registry"
