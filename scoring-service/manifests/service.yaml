@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: scoring-service-lkozlov
+  namespace: test
+  labels:
+    app: scoring-service
+    student: lkozlov
+spec:
+  type: ClusterIP
+  selector:
+    app: scoring-service
+    student: lkozlov
+  ports:
+    - name: http
+      port: 8002
+      targetPort: 8002

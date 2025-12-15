@@ -36,7 +36,7 @@ def get_products(
     """Получение списка продуктов с использованием Redis-кэша."""
 
     products = None
-    key = f'{flow_type}_{PRODUCTS_KEY}'
+    key = f'lkozlov:{flow_type}_{PRODUCTS_KEY}'
 
     # Пытаемся взять из кэша
     try:

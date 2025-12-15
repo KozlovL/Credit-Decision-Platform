@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-data-service-lkozlov
+  namespace: test
+  labels:
+    student: lkozlov
+    app: user-data-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-data-service
+      student: lkozlov
+  template:
+    metadata:
+      labels:
+        app: user-data-service
+        student: lkozlov
+    spec:
+      containers:
+        - name: user-data-service
+          image: shift.gitlab.yandexcloud.net:5050/shift-python/y2025/homeworks/kozlov-l/shift_project/user-data-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8001
+          envFrom:
+            - secretRef:
+                name: db-credentials-lkozlov
+          env:
+            - name: CONFIG_FILE
+              value: "config.k8s.yaml"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/src/config.k8s.yaml
+              subPath: config.k8s.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: app-config-lkozlov
+      imagePullSecrets:
+        - name: lkozlov-container-registry

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config-lkozlov
+  namespace: test
+  labels:
+    student: lkozlov
+    app: flow-selection-service
+data:
+  config.k8s.yaml: |
+    data_service:
+      base_url: "http://user-data-service-lkozlov:8001"
+      timeout: 5
+      retries:
+        max_attempts: 2
+        delay: 1
+
+    redis:
+      host: "redis-master.infra.svc.cluster.local"
+      port: 6379
+      db: 0
+      ttl: 300
+      password: "shift_2025_python"

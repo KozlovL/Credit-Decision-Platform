@@ -33,7 +33,7 @@
 
 ---
 
-## Установка и запуск сервисов
+## Установка и запуск сервисов локально
 
 **Требования:**
 
@@ -44,7 +44,7 @@
 ### 1. Клонирование репозитория и переход в корень проекта
 
 ```bash
-git clone -b shift-3850 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+git clone -b shift-3898 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
 cd shift_project
 ```
 
@@ -66,19 +66,15 @@ docker compose up -d
 
 ### 4. Доступ к сервисам
 
-
 #### user-data-service
-
 
 * Документация: [http://127.0.0.1:8001/docs](http://127.0.0.1:8001/docs)
 
 #### flow-selection-service
 
-
 * Документация: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
 #### scoring-service
-
 
 * Документация: [http://127.0.0.1:8002/docs](http://127.0.0.1:8002/docs)
 
@@ -148,7 +144,7 @@ docker compose up -d
 ```json
 {
   "user_data": {
-    "phone": "72222222222",
+    "phone": "72222222221",
     "age": 25,
     "monthly_income": 3000000,
     "employment_type": "full_time",
@@ -182,9 +178,52 @@ docker compose exec {service-name} poetry run pytest -v
 
 ---
 
+## Деплой проекта на сервере через Kubernetes
+
+### 1. Подключение к серверу и проброс портов
+
+```bash
+ssh -L 8081:localhost:8081 -L 8082:localhost:8082 -L 8080:localhost:8080 <user>@host-vm
+```
+
+### 2. Клонирование репозитория на сервере
+
+```bash
+git clone -b shift-3898 git@shift.gitlab.yandexcloud.net:shift-python/y2025/homeworks/kozlov-l/shift_project.git
+cd shift_project
+```
+
+### 3. Применение всех манифестов Kubernetes
+
+Для каждого сервиса:
+
+```bash
+kubectl apply -f user-data-service/manifests
+kubectl apply -f flow-selection-service/manifests
+kubectl apply -f scoring-service/manifests
+```
+
+### 4. Проброс портов сервисов для локального доступа
+
+```bash
+kubectl port-forward svc/user-data-service-lkozlov 8081:8001 &
+kubectl port-forward svc/flow-selection-service-lkozlov 8080:8000 &
+kubectl port-forward svc/scoring-service-lkozlov 8082:8002 &
+```
+
+> После этого сервисы будут доступны локально по следующим адресам:
+>
+> * `http://localhost:8081` — user-data-service
+> * `http://localhost:8080` — flow-selection-service
+> * `http://localhost:8082` — scoring-service
+
+> Примеры JSON payload для запросов уже приведены выше.
+
+---
+
 ## Примечания
 
 * Все суммы указаны в копейках.
-* Для корректной работы сервисов необходимо, чтобы Docker-контейнеры Kafka и Kafka UI были запущены.
-* Kafka UI доступен по адресу: [http://localhost:8085](http://localhost:8085)
-* Все импорты внутри проекта настроены так, чтобы начинаться с `app`.
+* Для корректной работы сервисов необходимо, чтобы Kafka была доступна.
+* Документация сервисов доступна по локально прокинутым портам (см. раздел выше).
+* При недоступности приведенных выше портов можно использовать другие незанятые

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scoring-service-lkozlov
+  namespace: test
+  labels:
+    student: lkozlov
+    app: scoring-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scoring-service
+      student: lkozlov
+  template:
+    metadata:
+      labels:
+        app: scoring-service
+        student: lkozlov
+    spec:
+      containers:
+        - name: scoring-service
+          image: shift.gitlab.yandexcloud.net:5050/shift-python/y2025/homeworks/kozlov-l/shift_project/scoring-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8002
+          env:
+            - name: CONFIG_FILE
+              value: "config.k8s.yaml"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/src/config.k8s.yaml
+              subPath: config.k8s.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: app-config-lkozlov
+      imagePullSecrets:
+        - name: lkozlov-container-registry

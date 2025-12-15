@@ -57,4 +57,4 @@ ENV PYTHONPATH=/app/src
 
 EXPOSE 8001
 
-CMD ["uvicorn", "app.service:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["bash", "-c", "alembic upgrade head && python -m app.seed && uvicorn app.service:app --host 0.0.0.0 --port 8001"]
