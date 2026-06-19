@@ -66,35 +66,35 @@
 
 ### Общая схема взаимодействия
 
-![alt text](image.png)
+![alt text](/images/image.png)
 
 ### Поток данных (Kafka)
 
-![alt text](mermaid-diagram-2026-06-19-182050.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182050.png)
 
 ### Схема развёртывания
 
-![alt text](mermaid-diagram-2026-06-19-182211.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182211.png)
 
-![alt text](mermaid-diagram-2026-06-19-182229.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182229.png)
 
 ## Бизнес-процессы
 
 ### Скоринговая модель
 
-![alt text](mermaid-diagram-2026-06-19-182302.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182302.png)
 
 ### Факторы скоринга
 
-![alt text](mermaid-diagram-2026-06-19-182348.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182348.png)
 
 ### Антифрод-проверки
 
-![alt text](mermaid-diagram-2026-06-19-182411.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182411.png)
 
 ## Технологический стек
 
-![alt text](mermaid-diagram-2026-06-19-182449.png)
+![alt text](/images/mermaid-diagram-2026-06-19-182449.png)
 
 ## Структура проекта
 
@@ -203,7 +203,7 @@ docker compose ps
 
 ## API-эндпоинты
 
-![alt text](mermaid-diagram-2026-06-19-183135.png)
+![alt text](/images/mermaid-diagram-2026-06-19-183135.png)
 
 ## Примеры запросовПримеры запросов
 
@@ -320,9 +320,6 @@ docker compose exec {service-name} poetry run pytest -v
 # Пример: все тесты для scoring-service
 docker compose exec scoring-service poetry run pytest -v
 
-# Тесты с покрытием
-docker compose exec {service-name} poetry run pytest --cov=app --cov-report=term
-
 # Все тесты для всех сервисов
 for service in user-data-service flow-selection-service scoring-service antifraud-service; do
   docker compose exec $service poetry run pytest -v
@@ -337,23 +334,7 @@ done
 | Ruff | Линтер и проверка стиля | `poetry run ruff check .` |
 | mypy | Статическая проверка типов | `poetry run mypy .` |
 | pytest | Модульное и интеграционное тестирование | `poetry run pytest -v` |
-| pytest-cov | Проверка покрытия кода | `poetry run pytest --cov=app` |
 
-**Проверка качества локально**
-```
-
-# Проверка стиля и линтинг
-poetry run ruff check .
-
-# Статическая проверка типов
-poetry run mypy .
-
-# Запуск всех тестов
-poetry run pytest -v
-
-# Проверка покрытия
-poetry run pytest --cov=app --cov-report=term
-```
 
 ## Развёртывание
 
@@ -405,4 +386,4 @@ helm uninstall lkozlov-user-data-service -n test
 
 * Версионирование событий — поле version в сообщениях Kafka обеспечивает обратную совместимость.
 
-* Развертывание через Helm доступно только через сервер
+* Helm, Prometheus, Grafana, Jaeger в данный момент недоступны, так как доступ к серверу ограничен.

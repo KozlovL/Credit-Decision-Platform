@@ -131,9 +131,9 @@ def loyalty_user():
         'phone': '79999990001',
         'profile': {
             'age': 24,
-            'monthly_income': 2_000_000,
+            'monthly_income': 1_000_000,
             'employment_type': EmploymentType.FREELANCE,
-            'has_property': True,
+            'has_property': False,
         },
         'history': [
             {
@@ -200,7 +200,7 @@ def low_score_user():
         'phone': '79999990004',
         'profile': {
             'age': 23,
-            'monthly_income': 20_000,
+            'monthly_income': 20_000_00,
             'employment_type': EmploymentType.FREELANCE,
             'has_property': False,
         },
@@ -208,11 +208,11 @@ def low_score_user():
             {
                 'loan_id': 'loan_79999990004_20241015120000',
                 'product_name': MICROLOAN_STR,
-                'amount': 30_000,
-                'issue_date': '2025-04-15',
+                'amount': 30_000_00,
+                'issue_date': '2026-04-15',
                 'term_days': 30,
                 'status': 'closed',
-                'close_date': '2025-05-15',
+                'close_date': '2026-05-15',
             }
         ],
     }

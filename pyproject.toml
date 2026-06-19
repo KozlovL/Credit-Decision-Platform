@@ -84,7 +84,7 @@ module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 [tool.poetry]
-name = "shift-project"
+name = "Credit-Decision-Platform"
 version = "0.1.0"
 description = ""
 authors = ["Kozlov Leonid <jimjpoggers@yandex.ru>"]
